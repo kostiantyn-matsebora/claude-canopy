@@ -30,6 +30,22 @@ if (-not (Test-Path "$CanopyDir/FRAMEWORK.md")) {
 New-Item -ItemType Directory -Force -Path ".claude/rules" | Out-Null
 New-Item -ItemType Directory -Force -Path ".claude/skills/shared/project" | Out-Null
 
+# ── Junction links for bundled canopy skills ──────────────────────────────────
+# VS Code does not scan inside git submodules for skill discovery.
+# Create directory junctions in .claude/skills/ so each bundled skill is visible.
+Get-ChildItem "$CanopyDir/skills" -Directory |
+    Where-Object { $_.Name -ne "shared" } |
+    ForEach-Object {
+        $JunctionPath = ".claude/skills/$($_.Name)"
+        if (Test-Path $JunctionPath) {
+            Write-Skipped $JunctionPath
+        } else {
+            $AbsTarget = Resolve-Path $_.FullName
+            New-Item -ItemType Junction -Path $JunctionPath -Target $AbsTarget | Out-Null
+            Write-Created "$JunctionPath  →  $AbsTarget"
+        }
+    }
+
 # ── .claude/rules/skill-resources.md ─────────────────────────────────────────
 if (Test-Path $RulesFile) {
     Write-Skipped $RulesFile

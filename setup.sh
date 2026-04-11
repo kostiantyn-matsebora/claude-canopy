@@ -33,6 +33,22 @@ fi
 mkdir -p ".claude/rules"
 mkdir -p ".claude/skills/shared/project"
 
+# ── Symlinks for bundled canopy skills ────────────────────────────────────────
+# VS Code does not scan inside git submodules for skill discovery.
+# Create symlinks in .claude/skills/ so each bundled skill is visible.
+for skill_dir in "$CANOPY_DIR/skills"/*/; do
+  skill_name="$(basename "$skill_dir")"
+  [[ "$skill_name" == "shared" ]] && continue
+  link_path=".claude/skills/$skill_name"
+  if [[ -e "$link_path" || -L "$link_path" ]]; then
+    skipped "$link_path"
+  else
+    abs_target="$(cd "$skill_dir" && pwd)"
+    ln -s "$abs_target" "$link_path"
+    created "$link_path  →  $abs_target"
+  fi
+done
+
 # ── .claude/rules/skill-resources.md ─────────────────────────────────────────
 if [[ -f "$RULES_FILE" ]]; then
   skipped "$RULES_FILE"
