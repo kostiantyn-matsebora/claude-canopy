@@ -1,4 +1,4 @@
-# optimize-skill — Local Ops
+# canopy-skill — Local Ops
 
 Skill-specific ops. Highest priority in the three-level lookup order.
 Branches may be op calls or natural language.

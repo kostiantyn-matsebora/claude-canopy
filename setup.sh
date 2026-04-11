@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+# Canopy submodule setup script
+# Run from your project root after: git submodule add <canopy-url> .claude/canopy
+#
+# Creates the wiring files that Claude Code needs to see both canopy internals
+# and your own skills. Safe to re-run — existing files are never overwritten.
+
+set -euo pipefail
+
+CANOPY_DIR=".claude/canopy"
+RULES_FILE=".claude/rules/skill-resources.md"
+PROJECT_OPS=".claude/skills/shared/project/ops.md"
+SHARED_OPS=".claude/skills/shared/ops.md"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
+created() { echo -e "  ${GREEN}created${RESET}  $1"; }
+skipped() { echo -e "  ${YELLOW}exists${RESET}   $1  (skipped)"; }
+error()   { echo -e "  ${RED}error${RESET}    $1"; exit 1; }
+
+echo "Canopy submodule setup"
+echo "----------------------"
+
+# Verify submodule is present
+if [[ ! -f "$CANOPY_DIR/FRAMEWORK.md" ]]; then
+  error "$CANOPY_DIR not found. Run: git submodule add https://github.com/kostiantyn-matsebora/claude-canopy .claude/canopy"
+fi
+
+# Create directories
+mkdir -p ".claude/rules"
+mkdir -p ".claude/skills/shared/project"
+
+# ── .claude/rules/skill-resources.md ─────────────────────────────────────────
+if [[ -f "$RULES_FILE" ]]; then
+  skipped "$RULES_FILE"
+else
+  cat > "$RULES_FILE" << 'EOF'
+---
+globs: [".claude/skills/**", ".claude/canopy/skills/**"]
+---
+
+# Skill Resource Conventions
+
+This is the **submodule** version of this file — used when Canopy is at `.claude/canopy/`.
+It extends the glob to cover both your project skills and canopy's bundled skills.
+
+---
+
+## Category behavior
+
+When a skill step says `Read <category>/<file>`, the directory determines behavior:
+
+| Category | File types | Behavior |
+|----------|------------|----------|
+| `schemas/` | `.json`, `.md` | Use as subagent output contract or input parameter definition |
+| `templates/` | `.yaml`, `.md`, `.yaml.gotmpl` | Substitute all `<token>` placeholders from step context; write to target path stated in step |
+| `commands/` | `.ps1`, `.sh` | Execute the section identified with `for <operation>`; capture named output values stated in step |
+| `constants/` | `.md` | Load all named values into step context; reference by name in subsequent steps |
+| `policies/` | `.md` | Apply as active rules for the duration of the skill |
+| `verify/` | `.md` | Use as expected-state checklist during the verification phase |
+
+## Named operations
+
+When a step or tree node contains an ALL_CAPS identifier:
+1. Look up in `<skill>/ops.md` first (skill-local ops)
+2. Fall back to `.claude/skills/shared/project/ops.md` (project-wide ops)
+3. Fall back to `.claude/canopy/skills/shared/framework/ops.md` (framework primitives)
+
+`IF`, `ELSE_IF`, `ELSE`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED` are primitives — always in `shared/framework/ops.md`.
+
+## Tree format
+
+When a skill has `## Tree` instead of `## Steps`: execute the tree top-to-bottom as a sequential pipeline.
+
+Each node is either an op call (`OP_NAME << inputs >> outputs`) or natural language — both are valid.
+`IF` nodes branch on condition; both branches may be op calls or natural language.
+Op definitions in `<skill>/ops.md`, `shared/project/ops.md`, and `shared/framework/ops.md` may also use tree notation internally.
+
+## Explore subagent
+
+When a skill has a `## Agent` section declaring `**explore**`:
+- Launch an Explore subagent with the task described in that section
+- Do NOT inline-read files yourself
+- Use `schemas/explore-schema.json` as the output contract; return JSON only
+EOF
+  created "$RULES_FILE"
+fi
+
+# ── .claude/skills/shared/project/ops.md ─────────────────────────────────────
+if [[ -f "$PROJECT_OPS" ]]; then
+  skipped "$PROJECT_OPS"
+else
+  cat > "$PROJECT_OPS" << 'EOF'
+# Project-Wide Ops
+
+Shared ops specific to this project. Available to all skills; not portable to other projects without adaptation.
+
+Add an op here when:
+- The same multi-step pattern appears in 2 or more skills
+- The behavior is complex enough to warrant a named abstraction
+- The op involves project-specific tools, APIs, or conventions
+
+Notation: `<<` input source or options, `>>` captured output or displayed fields, `|` item separator.
+Op definitions may use tree notation internally (same syntax as skill.md `## Tree`).
+
+---
+
+# ── Examples (commented out — uncomment and adapt for your project) ──────────
+
+# ## MY_DEPLOY << dir
+#
+# Deploy the application in `<dir>`.
+# 1. Run dry-run: show diff
+# 2. ASK << Proceed? | Yes | No
+# 3. Apply changes
+
+# ## MY_VERIFY << namespace
+#
+# Check that all pods in `<namespace>` are Running/Ready.
+# Report any pods that are not ready after 2 minutes.
+
+# ## MY_SECRET_READ << path >> {fields}
+#
+# Read secret at `<path>` from the project secret store.
+# Capture named `{fields}` into step context.
+
+# ## MY_SECRET_WRITE << path << {fields}
+#
+# Write `{fields}` to `<path>` in the project secret store.
+# Patch if path exists; create if new.
+
+# ─────────────────────────────────────────────────────────────────────────────
+EOF
+  created "$PROJECT_OPS"
+fi
+
+# ── .claude/skills/shared/ops.md ─────────────────────────────────────────────
+if [[ -f "$SHARED_OPS" ]]; then
+  skipped "$SHARED_OPS"
+else
+  cat > "$SHARED_OPS" << 'EOF'
+# Shared Ops — Redirected
+
+This file has been split. Use the files below directly or rely on the three-level lookup order in `skill-resources.md`.
+
+- **Framework primitives** (IF, ASK, SHOW_PLAN, …) → `.claude/canopy/skills/shared/framework/ops.md`
+- **Project-wide ops** (project-specific patterns) → `.claude/skills/shared/project/ops.md`
+EOF
+  created "$SHARED_OPS"
+fi
+
+echo ""
+echo "Done. Your project is wired for Canopy."
+echo ""
+echo "Next steps:"
+echo "  1. Add your skills under .claude/skills/<skill-name>/"
+echo "  2. Add project-wide ops to $PROJECT_OPS"
+echo "  3. Update the submodule later with: git submodule update --remote .claude/canopy"

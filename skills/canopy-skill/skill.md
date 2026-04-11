@@ -1,5 +1,5 @@
 ---
-name: optimize-skill
+name: canopy-skill
 description: Optimize a Claude Code skill — extract inline structured content into categorized subdirectories, convert steps to Tree format, create skill-local ops.md, compress prose, and replace cross-skill patterns with named ops. Result: a lean skill.md containing only orchestration.
 argument-hint: "<skill-name>"
 ---
@@ -17,7 +17,7 @@ Optimize skill: $ARGUMENTS
 ## Tree
 
 ```
-optimize-skill
+canopy-skill
 ├── EXPLORE >> context
 ├── AUDIT << context
 ├── SHOW_PLAN >> files to create | blocks to replace | trims | splits | named ops | tree conversions

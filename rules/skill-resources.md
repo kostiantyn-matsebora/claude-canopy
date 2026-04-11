@@ -5,10 +5,8 @@ globs: [".claude/skills/**"]
 # Skill Resource Conventions
 
 This is the **standalone** version of this file — used when Canopy is your entire `.claude/` directory.
-When using Canopy as a **git submodule** at `.claude/canopy/`, create a project-level
-`.claude/rules/skill-resources.md` that overrides this file and updates the paths below.
-
-See `FRAMEWORK.md` → "Submodule Wiring" for the template.
+When using Canopy as a **git submodule** at `.claude/canopy/`, run `setup.sh` / `setup.ps1` from the submodule
+rather than using this file — it creates a correctly wired version at `.claude/rules/skill-resources.md` in your project.
 
 ---
 

@@ -1,16 +1,16 @@
-# Canopy
+# Canopy — Framework Specification
 
-A declarative, tree-structured execution framework for Claude Code skills. Skills are defined as syntax trees of op calls and natural language. The tree is the source of truth; natural language is just one rendering of it.
+See [README.md](README.md) for overview, quick start, and setup.
 
 ---
 
 ## Framework Skills
 
-`optimize-skill` is a framework skill — it enforces and applies framework rules to all other skills.
+`canopy-skill` is a framework skill — it enforces and applies framework rules to all other skills.
 It must be updated whenever the framework changes (new syntax rules, new op levels, new category behavior).
 
 When modifying `FRAMEWORK.md`, `rules/skill-resources.md`, `skills/shared/framework/ops.md`, or `skills/shared/project/ops.md`,
-also check and update `skills/optimize-skill/policies/optimization-rules.md` to stay in sync.
+also check and update `skills/canopy-skill/policies/optimization-rules.md` to stay in sync.
 
 ---
 
@@ -30,7 +30,7 @@ also check and update `skills/optimize-skill/policies/optimization-rules.md` to 
     │   │   └── ops.md              # Project-wide ops — add your own here
     │   └── ops.md                  # Redirect stub — see framework/ and project/
     ├── FRAMEWORK.md                # This file
-    ├── optimize-skill/             # Framework-bundled skill
+    ├── canopy-skill/               # Framework-bundled skill
     └── <your-skill>/
         ├── skill.md                # Skill definition — frontmatter + Tree + Rules
         ├── ops.md                  # Skill-local op definitions
@@ -44,30 +44,7 @@ also check and update `skills/optimize-skill/policies/optimization-rules.md` to 
 
 ### As Git Submodule (recommended for projects)
 
-```
-.claude/
-├── canopy/                         ← git submodule → claude-canopy
-│   ├── FRAMEWORK.md
-│   ├── rules/
-│   │   └── skill-resources.md     # Canopy default rules (reference only)
-│   └── skills/
-│       ├── shared/
-│       │   ├── framework/
-│       │   │   └── ops.md         # Framework primitives
-│       │   ├── project/
-│       │   │   └── ops.md         # Stub — do not edit here
-│       │   └── ops.md
-│       └── optimize-skill/
-├── rules/
-│   └── skill-resources.md         # Project rules — override canopy; update paths
-└── skills/
-    ├── shared/
-    │   └── project/
-    │       └── ops.md             # Your project-specific ops live here
-    └── <your-skill>/
-```
-
-See `README.md` for submodule setup instructions.
+See [README.md](README.md) for submodule setup and wiring instructions.
 
 ---
 
@@ -91,60 +68,7 @@ SHOW_PLAN >> files | Vault changes | API calls
 
 ## Skill Anatomy
 
-Every skill is a `skill.md` file with four sections:
-
-```markdown
----
-name: skill-name
-description: One-line description shown in skill picker.
-argument-hint: "<required-arg> [optional-arg]"
----
-
-Preamble: $ARGUMENTS — parse and set context variables here.
-
----
-
-## Agent          ← optional; declares an explore subagent
-## Tree           ← execution tree (replaces ## Steps)
-## Rules          ← invariants and safety constraints
-## Response:      ← output format declaration
-```
-
-### `## Agent`
-
-Declares an `**explore**` subagent. Keep to a single task description — the rules file
-handles schema contract and no-inline-read implicitly.
-
-```markdown
-## Agent
-
-**explore** — reads helmfile for `<app-name>` under `apps/` or `platform/`,
-including environment values and `.github/instructions/` file.
-```
-
-The subagent uses `schemas/explore-schema.json` as its output contract automatically.
-
-### `## Tree`
-
-A fenced code block containing the skill's execution pipeline as a syntax tree.
-Nodes execute top-to-bottom. Each node is either an **op call** or **natural language** — both are valid.
-
-```
-skill-name
-├── EXPLORE >> context
-├── IF << condition
-│   └── SOME_OP << input
-├── ELSE
-│   └── natural language description of what to do
-├── SHARED_OP << arg1 | arg2 >> output
-└── IF << something went wrong
-    └── ROLLBACK
-```
-
-### `## Rules`
-
-Short bullet list of invariants that apply throughout the skill execution. Do not duplicate
-op-level behavior here — these are skill-wide constraints.
+See [README.md](README.md) for the full skill anatomy reference.
 
 ---
 
