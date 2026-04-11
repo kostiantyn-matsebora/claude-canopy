@@ -6,6 +6,8 @@ Canopy lets you define reusable AI agent workflows as **syntax trees of named op
 
 Skills are self-contained, composable, and version-controlled. The tree is the source of truth; natural language is just one rendering of it.
 
+See [claude-canopy-examples](https://github.com/kostiantyn-matsebora/claude-canopy-examples) for a working example project using Canopy as a submodule.
+
 ---
 
 ## How It Works
@@ -183,7 +185,9 @@ The script is idempotent — safe to re-run, never overwrites existing files.
 
 ---
 
-## Directory Structure
+## Usage
+
+### Directory Structure
 
 ```
 claude-canopy/
@@ -211,7 +215,7 @@ claude-canopy/
 
 ---
 
-## Writing a Skill
+### Writing a Skill
 
 Every skill is a `skill.md` file. Minimal example:
 
@@ -246,7 +250,7 @@ See [`FRAMEWORK.md`](FRAMEWORK.md) for the full specification.
 
 ---
 
-## Bundled Skills
+### Bundled Skills
 
 | Skill | Description |
 |-------|-------------|
