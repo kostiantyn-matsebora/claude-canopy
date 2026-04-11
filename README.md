@@ -268,6 +268,8 @@ Canopy is currently a personal project. Issues and PRs welcome once the API stab
 - `canopy-skill` must be updated whenever framework rules change
 - Framework primitives in `skills/shared/framework/ops.md` are immutable contracts
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR expectations.
+
 ---
 
 ## License
