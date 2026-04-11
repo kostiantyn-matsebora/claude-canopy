@@ -108,8 +108,8 @@ handles schema contract and no-inline-read implicitly.
 ```markdown
 ## Agent
 
-**explore** — reads helmfile for `<app-name>` under `apps/` or `platform/`,
-including environment values and `.github/instructions/` file.
+**explore** — reads the files for `<service-name>` under `services/`,
+including configs, templates, and existing deployment manifests.
 ```
 
 The subagent uses `schemas/explore-schema.json` as its output contract automatically.
@@ -217,7 +217,9 @@ claude-canopy/
 
 ### Writing a Skill
 
-Every skill is a `skill.md` file. Minimal example:
+Use the structure described in [Skill Anatomy](#skill-anatomy): frontmatter, optional Agent, Tree, Rules, and Response. In practice, most skills stay short and use the Tree for orchestration.
+
+Minimal example:
 
 ```markdown
 ---
