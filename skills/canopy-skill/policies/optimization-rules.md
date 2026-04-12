@@ -53,8 +53,20 @@ Remove subsection headings that are just labels for what follows extracted conte
 
 ## 6. Tree format over step lists
 
-When `## Steps` is a sequential pipeline with only `IF` branches, replace with `## Tree`:
+When `## Steps` is a sequential pipeline with only `IF` branches, replace with `## Tree`.
 
+Two equivalent syntaxes are accepted — convert to whichever reads more clearly:
+
+**Markdown list syntax** (preferred for new or simple trees):
+```markdown
+* skill-name
+  * OP_ONE >> output
+  * IF << condition
+    * OP_TWO
+  * OP_THREE << input
+```
+
+**Box-drawing syntax** (fenced code block):
 ```
 skill-name
 ├── OP_ONE >> output

@@ -7,6 +7,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.4.0] — 2026-04-12
+
+### Added
+
+- Markdown list syntax (`*` nested lists) as an alternative to box-drawing characters for tree definitions — write trees directly under `## Tree` without a fenced code block
+- `examples/` documentation split out to `claude-canopy-examples` repo; canopy repo stays submodule-clean
+
+### Changed
+
+- `rules/skill-resources.md` — Tree format section now documents both syntaxes with examples
+- `FRAMEWORK.md` — Tree Execution Model section shows both formats side-by-side; Skill-Local ops.md section shows markdown list format as alternative for branching op definitions
+- `README.md` — `## Tree` anatomy and minimal example updated to lead with markdown list syntax
+- `skills/canopy-skill/policies/optimization-rules.md` — Rule 6 updated to list both formats; markdown list marked as preferred for new/simple trees
+
+---
+
 ## [0.3.2] — 2026-04-12
 
 ### Added

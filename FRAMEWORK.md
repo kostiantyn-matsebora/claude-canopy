@@ -91,6 +91,34 @@ The tree is a **sequential pipeline** with branching. Execution is:
 | `ELSE_IF` | `ELSE_IF << condition` | Continue chain — execute if prior false |
 | `ELSE` | `ELSE` | Close chain — execute if all prior false |
 
+**Tree syntax — two equivalent formats:**
+
+*Markdown list syntax* — `*` nested lists written directly under `## Tree` (no fenced code block):
+
+```markdown
+* skill-name
+  * OP_ONE << input
+  * IF << condition
+    * OP_TWO
+  * ELSE
+    * natural language step
+  * OP_THREE >> output
+```
+
+*Box-drawing syntax* — fenced code block with tree characters:
+
+```
+skill-name
+├── OP_ONE << input
+├── IF << condition
+│   └── OP_TWO
+├── ELSE
+│   └── natural language step
+└── OP_THREE >> output
+```
+
+Both are parsed identically. Use whichever reads more naturally for the skill.
+
 ---
 
 ## Control Flow Primitives
@@ -149,7 +177,9 @@ Skill-specific branches, multi-step procedures, and decision trees. Lives alongs
 Fetch the chart's upstream default values from the internet to confirm the current image and tag.
 ```
 
-**Branching op** — use tree notation:
+**Branching op** — use tree notation (either syntax):
+
+Box-drawing format:
 ```markdown
 ## EDIT_IMAGE_TAG << image_defined_in | target_tag
 
@@ -159,6 +189,16 @@ EDIT_IMAGE_TAG << image_defined_in | target_tag
 │   └── CREATE_ENV_OVERRIDE
 └── ELSE — edit tag in-place at the path from image_defined_in
 \`\`\`
+```
+
+Markdown list format:
+```markdown
+## EDIT_IMAGE_TAG << image_defined_in | target_tag
+
+* EDIT_IMAGE_TAG << image_defined_in | target_tag
+  * IF << image_defined_in = chart-defaults-only
+    * CREATE_ENV_OVERRIDE
+  * ELSE — edit tag in-place at the path from image_defined_in
 ```
 
 Op definitions calling other ops (including shared ops) is valid — the system is self-similar.

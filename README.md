@@ -116,8 +116,25 @@ The subagent uses `schemas/explore-schema.json` as its output contract automatic
 
 ### `## Tree`
 
-A fenced code block containing the skill's execution pipeline as a syntax tree.
-Nodes execute top-to-bottom. Each node is either an **op call** or **natural language** — both are valid.
+The skill's execution pipeline as a syntax tree. Nodes execute top-to-bottom. Each node is either an **op call** or **natural language** — both are valid.
+
+Two equivalent syntaxes are accepted:
+
+**Markdown list syntax** — `*` nested lists, written directly under `## Tree`:
+
+```markdown
+* skill-name
+  * EXPLORE >> context
+  * IF << condition
+    * SOME_OP << input
+  * ELSE
+    * natural language description of what to do
+  * SHARED_OP << arg1 | arg2 >> output
+  * IF << something went wrong
+    * ROLLBACK
+```
+
+**Box-drawing syntax** — fenced code block with tree characters:
 
 ```
 skill-name
@@ -219,7 +236,7 @@ claude-canopy/
 
 Use the structure described in [Skill Anatomy](#skill-anatomy): frontmatter, optional Agent, Tree, Rules, and Response. In practice, most skills stay short and use the Tree for orchestration.
 
-Minimal example:
+Minimal example (markdown list syntax):
 
 ```markdown
 ---
@@ -234,18 +251,29 @@ Target: $ARGUMENTS
 
 ## Tree
 
-\`\`\`
-my-skill
-├── SHOW_PLAN >> what will change
-├── ASK << Proceed? | Yes | No
-└── do the thing
-\`\`\`
+* my-skill
+  * SHOW_PLAN >> what will change
+  * ASK << Proceed? | Yes | No
+  * do the thing
 
 ## Rules
 
 - Never overwrite existing files without confirmation
 
 ## Response: Summary / Changes / Notes
+```
+
+Same skill using box-drawing syntax:
+
+```markdown
+## Tree
+
+\`\`\`
+my-skill
+├── SHOW_PLAN >> what will change
+├── ASK << Proceed? | Yes | No
+└── do the thing
+\`\`\`
 ```
 
 See [`FRAMEWORK.md`](FRAMEWORK.md) for the full specification.

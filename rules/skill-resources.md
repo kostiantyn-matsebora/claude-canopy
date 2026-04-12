@@ -36,6 +36,30 @@ When a step or tree node contains an ALL_CAPS identifier:
 
 When a skill has `## Tree` instead of `## Steps`: execute the tree top-to-bottom as a sequential pipeline.
 
+Two equivalent syntaxes are accepted:
+
+**Markdown list syntax** — `*` nested lists written directly under `## Tree` (no fenced code block):
+```markdown
+* skill-name
+  * OP_NAME << input >> output
+  * IF << condition
+    * branch-op
+  * ELSE
+    * other-op
+```
+
+**Box-drawing syntax** — fenced code block with tree characters:
+```
+skill-name
+├── OP_NAME << input >> output
+├── IF << condition
+│   └── branch-op
+└── ELSE
+    └── other-op
+```
+
+Both syntaxes express the same execution model. Use whichever is easier to read and maintain.
+
 Each node is either an op call (`OP_NAME << inputs >> outputs`) or natural language — both are valid.
 `IF` nodes branch on condition; both branches may be op calls or natural language.
 Op definitions in `<skill>/ops.md`, `shared/project/ops.md`, and `shared/framework/ops.md` may also use tree notation internally.
