@@ -73,7 +73,7 @@ Op lookup (ALL_CAPS node → definition):          Category resources (loaded pe
 
 - **Subagent support** — explore subagents with typed JSON output contracts
 
-- **`canopy-skill`** — a bundled meta-skill that enforces and applies framework rules to your own skills
+- **`canopy-skill` agent** — create, modify, scaffold, validate, and convert skills without writing a line by hand
 
 - **Submodule-friendly** — designed to live at `.claude/canopy/` inside any project
 
@@ -95,63 +95,12 @@ Preamble: $ARGUMENTS — parse and set context variables here.
 ---
 
 ## Agent          ← optional; declares an explore subagent
-## Tree           ← execution tree (replaces ## Steps)
+## Tree           ← execution pipeline
 ## Rules          ← invariants and safety constraints
 ## Response:      ← output format declaration
 ```
 
-### `## Agent`
-
-Declares an `**explore**` subagent. Keep to a single task description — the rules file
-handles schema contract and no-inline-read implicitly.
-
-```markdown
-## Agent
-
-**explore** — reads the files for `<service-name>` under `services/`,
-including configs, templates, and existing deployment manifests.
-```
-
-The subagent uses `schemas/explore-schema.json` as its output contract automatically.
-
-### `## Tree`
-
-The skill's execution pipeline as a syntax tree. Nodes execute top-to-bottom. Each node is either an **op call** or **natural language** — both are valid.
-
-Two equivalent syntaxes are accepted:
-
-**Markdown list syntax** — `*` nested lists, written directly under `## Tree`:
-
-```markdown
-* skill-name
-  * EXPLORE >> context
-  * IF << condition
-    * SOME_OP << input
-  * ELSE
-    * natural language description of what to do
-  * SHARED_OP << arg1 | arg2 >> output
-  * IF << something went wrong
-    * ROLLBACK
-```
-
-**Box-drawing syntax** — fenced code block with tree characters:
-
-```
-skill-name
-├── EXPLORE >> context
-├── IF << condition
-│   └── SOME_OP << input
-├── ELSE
-│   └── natural language description of what to do
-├── SHARED_OP << arg1 | arg2 >> output
-└── IF << something went wrong
-    └── ROLLBACK
-```
-
-### `## Rules`
-
-Short bullet list of invariants that apply throughout the skill execution. Do not duplicate
-op-level behavior here — these are skill-wide constraints.
+See [`AUTHORING.md`](AUTHORING.md) for the full manual authoring reference.
 
 ---
 
@@ -184,11 +133,14 @@ bash .claude/canopy/setup.sh        # Linux / macOS
 pwsh .claude/canopy/setup.ps1       # Windows
 ```
 
-The setup script creates three files in your project (outside the submodule):
+The setup script creates files and links in your project (outside the submodule):
 
 ```
 .claude/
 ├── canopy/                          ← git submodule (never edit here)
+├── agents/
+│   ├── canopy-skill.md              ← symlinked from canopy; bundled agent
+│   └── canopy-skill/                ← symlinked from canopy; agent resources
 ├── rules/
 │   └── skill-resources.md          ← created by setup; globs cover both dirs
 └── skills/
@@ -204,87 +156,67 @@ The script is idempotent — safe to re-run, never overwrites existing files.
 
 ## Usage
 
+### Using the `canopy-skill` Agent
+
+The `canopy-skill` agent handles the full skill lifecycle. Invoke it naturally in Claude Code:
+
+| Operation | What to say |
+|-----------|------------|
+| **Create** | "Create a canopy skill that bumps semantic versions across project files" |
+| **Modify** | "Add a dry-run option to the deploy-service skill" |
+| **Scaffold** | "Scaffold a blank skill called api-docs" |
+| **Convert to Canopy** | "Convert my old deploy.md skill to canopy format" |
+| **Validate** | "Validate the bump-version skill" |
+| **Convert to regular** | "Convert the review-file skill back to a plain skill" |
+
+For **Create** and **Scaffold**, the agent asks your preferred tree syntax — **markdown list** (`*` nested bullets) or **box-drawing** (fenced tree characters) — before writing anything.
+
+Every operation shows a plan and asks for confirmation before making changes.
+
+### Writing a Skill Manually
+
+See [`AUTHORING.md`](AUTHORING.md) for the full manual reference — skill anatomy, tree
+syntax, op definitions, category resource conventions, and what `skill.md` must not contain.
+
+---
+
 ### Directory Structure
 
 ```
 claude-canopy/
 ├── FRAMEWORK.md                    # Full framework specification
+├── AUTHORING.md                    # Manual skill authoring reference
 ├── README.md                       # This file
 ├── CHANGELOG.md
 ├── LICENSE
+├── agents/
+│   ├── canopy-skill.md            # Bundled framework agent
+│   └── canopy-skill/              # Agent resource files
+│       ├── policies/
+│       │   └── optimization-rules.md
+│       ├── schemas/
+│       │   └── explore-schema.json
+│       └── templates/
+│           ├── skill.md           # Skill skeleton template
+│           └── ops.md             # Ops skeleton template
 ├── rules/
 │   └── skill-resources.md         # Ambient rules (standalone use)
 └── skills/
-    ├── shared/
-    │   ├── framework/
-    │   │   └── ops.md             # Framework primitives — never overridden
-    │   ├── project/
-    │   │   └── ops.md             # Stub — replace with your project ops
-    │   └── ops.md                 # Redirect stub
-    └── canopy-skill/              # Bundled framework skill
-        ├── skill.md
-        ├── ops.md
-        ├── policies/
-        │   └── optimization-rules.md
-        └── schemas/
-            └── explore-schema.json
+    └── shared/
+        ├── framework/
+        │   └── ops.md             # Framework primitives — never overridden
+        ├── project/
+        │   └── ops.md             # Stub — replace with your project ops
+        └── ops.md                 # Redirect stub
 ```
 
 ---
 
-### Writing a Skill
+### Bundled Agents
 
-Use the structure described in [Skill Anatomy](#skill-anatomy): frontmatter, optional Agent, Tree, Rules, and Response. In practice, most skills stay short and use the Tree for orchestration.
-
-Minimal example (markdown list syntax):
-
-```markdown
----
-name: my-skill
-description: Does something useful.
-argument-hint: "<target>"
----
-
-Target: $ARGUMENTS
-
----
-
-## Tree
-
-* my-skill
-  * SHOW_PLAN >> what will change
-  * ASK << Proceed? | Yes | No
-  * do the thing
-
-## Rules
-
-- Never overwrite existing files without confirmation
-
-## Response: Summary / Changes / Notes
-```
-
-Same skill using box-drawing syntax:
-
-```markdown
-## Tree
-
-\`\`\`
-my-skill
-├── SHOW_PLAN >> what will change
-├── ASK << Proceed? | Yes | No
-└── do the thing
-\`\`\`
-```
-
-See [`FRAMEWORK.md`](FRAMEWORK.md) for the full specification.
-
----
-
-### Bundled Skills
-
-| Skill | Description |
+| Agent | Description |
 |-------|-------------|
-| `canopy-skill` | Audit and optimize any Canopy skill — extracts inline content, converts to tree format, creates ops |
+| `canopy-skill` | Create, modify, scaffold, validate, and convert Canopy skills |
 
 ---
 
@@ -293,7 +225,7 @@ See [`FRAMEWORK.md`](FRAMEWORK.md) for the full specification.
 Canopy is currently a personal project. Issues and PRs welcome once the API stabilizes.
 
 - Keep `FRAMEWORK.md` as the single source of truth
-- `canopy-skill` must be updated whenever framework rules change
+- `canopy-skill` agent must be updated whenever framework rules change
 - Framework primitives in `skills/shared/framework/ops.md` are immutable contracts
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR expectations.

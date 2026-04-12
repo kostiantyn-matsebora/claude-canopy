@@ -4,13 +4,37 @@ See [README.md](README.md) for overview, quick start, and setup.
 
 ---
 
-## Framework Skills
+## Framework Agents
 
-`canopy-skill` is a framework skill — it enforces and applies framework rules to all other skills.
-It must be updated whenever the framework changes (new syntax rules, new op levels, new category behavior).
+`canopy-skill` is a framework **agent** — it creates, modifies, scaffolds, validates, and converts Canopy skills.
 
 When modifying `FRAMEWORK.md`, `rules/skill-resources.md`, `skills/shared/framework/ops.md`, or `skills/shared/project/ops.md`,
-also check and update `skills/canopy-skill/policies/optimization-rules.md` to stay in sync.
+also update `agents/canopy-skill/policies/optimization-rules.md` to stay in sync.
+
+### Agent Format
+
+Agents live at `.claude/agents/<name>.md` and use Claude Code's native agent frontmatter:
+
+```markdown
+---
+name: agent-name
+description: When to invoke this agent (used for routing in the subagent picker)
+tools: Read, Write, Edit, Glob, Grep, Bash
+---
+
+System prompt content...
+```
+
+Agent resource files follow the same category subdirectory conventions as skills:
+
+| Directory | Content |
+|-----------|---------|
+| `agents/<name>/policies/` | Policy files read by the agent at runtime |
+| `agents/<name>/schemas/` | JSON schemas used as output contracts or examples |
+| `agents/<name>/templates/` | Skeleton files substituted and written by the agent |
+
+The setup scripts create symlinks (Linux/macOS) or junctions (Windows) in `.claude/agents/`
+for each bundled agent and its resource directories, mirroring the skill symlink pattern.
 
 ---
 
@@ -20,6 +44,16 @@ also check and update `skills/canopy-skill/policies/optimization-rules.md` to st
 
 ```
 .claude/                              ← clone or copy of claude-canopy
+├── agents/
+│   ├── canopy-skill.md             # Framework-bundled agent
+│   └── canopy-skill/               # Agent resource files
+│       ├── policies/
+│       │   └── optimization-rules.md
+│       ├── schemas/
+│       │   └── explore-schema.json
+│       └── templates/
+│           ├── skill.md
+│           └── ops.md
 ├── rules/
 │   └── skill-resources.md          # Ambient rules — auto-applied to all skill files
 └── skills/
@@ -30,7 +64,6 @@ also check and update `skills/canopy-skill/policies/optimization-rules.md` to st
     │   │   └── ops.md              # Project-wide ops — add your own here
     │   └── ops.md                  # Redirect stub — see framework/ and project/
     ├── FRAMEWORK.md                # This file
-    ├── canopy-skill/               # Framework-bundled skill
     └── <your-skill>/
         ├── skill.md                # Skill definition — frontmatter + Tree + Rules
         ├── ops.md                  # Skill-local op definitions

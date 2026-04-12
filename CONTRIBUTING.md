@@ -16,7 +16,7 @@ If a change affects framework behavior, keep these files in sync:
 - `FRAMEWORK.md`
 - `rules/skill-resources.md`
 - `skills/shared/framework/ops.md`
-- `skills/canopy-skill/policies/optimization-rules.md`
+- `agents/canopy-skill/policies/optimization-rules.md`
 
 ## Getting Started
 

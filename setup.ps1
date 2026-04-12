@@ -29,6 +29,7 @@ if (-not (Test-Path "$CanopyDir/FRAMEWORK.md")) {
 # Create directories
 New-Item -ItemType Directory -Force -Path ".claude/rules" | Out-Null
 New-Item -ItemType Directory -Force -Path ".claude/skills/shared/project" | Out-Null
+New-Item -ItemType Directory -Force -Path ".claude/agents" | Out-Null
 
 # ── Junction links for bundled canopy skills ──────────────────────────────────
 # VS Code does not scan inside git submodules for skill discovery.
@@ -45,6 +46,46 @@ Get-ChildItem "$CanopyDir/skills" -Directory |
             Write-Created "$JunctionPath  →  $AbsTarget"
         }
     }
+
+# ── Links for bundled canopy agents ───────────────────────────────────────────
+# Claude Code looks for agents in .claude/agents/ — link each bundled agent
+# file and its resource directory so they are visible outside the submodule.
+# Note: file symbolic links (SymbolicLink) require Windows Developer Mode or
+# admin privileges. If New-Item -ItemType SymbolicLink fails, copy the .md files
+# manually into .claude/agents/.
+$AgentsDir = "$CanopyDir/agents"
+if (Test-Path $AgentsDir) {
+    # Agent .md files — use SymbolicLink (files, not directories)
+    Get-ChildItem $AgentsDir -Filter "*.md" -File |
+        ForEach-Object {
+            $LinkPath = ".claude/agents/$($_.Name)"
+            if (Test-Path $LinkPath) {
+                Write-Skipped $LinkPath
+            } else {
+                $AbsTarget = Resolve-Path $_.FullName
+                try {
+                    New-Item -ItemType SymbolicLink -Path $LinkPath -Target $AbsTarget | Out-Null
+                    Write-Created "$LinkPath  →  $AbsTarget"
+                } catch {
+                    # Fallback: copy if symlink creation requires elevated privileges
+                    Copy-Item $AbsTarget $LinkPath
+                    Write-Created "$LinkPath  (copied — symlink requires Developer Mode)"
+                }
+            }
+        }
+    # Agent resource directories — use Junction (directory links work without elevation)
+    Get-ChildItem $AgentsDir -Directory |
+        ForEach-Object {
+            $JunctionPath = ".claude/agents/$($_.Name)"
+            if (Test-Path $JunctionPath) {
+                Write-Skipped $JunctionPath
+            } else {
+                $AbsTarget = Resolve-Path $_.FullName
+                New-Item -ItemType Junction -Path $JunctionPath -Target $AbsTarget | Out-Null
+                Write-Created "$JunctionPath  →  $AbsTarget"
+            }
+        }
+}
 
 # ── .claude/rules/skill-resources.md ─────────────────────────────────────────
 if (Test-Path $RulesFile) {
@@ -170,5 +211,6 @@ Write-Host "Done. Your project is wired for Canopy."
 Write-Host ""
 Write-Host "Next steps:"
 Write-Host "  1. Add your skills under .claude/skills/<skill-name>/"
-Write-Host "  2. Add project-wide ops to $ProjectOps"
-Write-Host "  3. Update the submodule later with: git submodule update --remote .claude/canopy"
+Write-Host "  2. Add your agents under .claude/agents/"
+Write-Host "  3. Add project-wide ops to $ProjectOps"
+Write-Host "  4. Update the submodule later with: git submodule update --remote .claude/canopy"

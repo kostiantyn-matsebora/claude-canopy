@@ -32,6 +32,7 @@ fi
 # Create directories
 mkdir -p ".claude/rules"
 mkdir -p ".claude/skills/shared/project"
+mkdir -p ".claude/agents"
 
 # ── Symlinks for bundled canopy skills ────────────────────────────────────────
 # VS Code does not scan inside git submodules for skill discovery.
@@ -48,6 +49,38 @@ for skill_dir in "$CANOPY_DIR/skills"/*/; do
     created "$link_path  →  $abs_target"
   fi
 done
+
+# ── Symlinks for bundled canopy agents ────────────────────────────────────────
+# Claude Code looks for agents in .claude/agents/ — symlink each bundled agent
+# file and its resource directory so they are visible outside the submodule.
+if [[ -d "$CANOPY_DIR/agents" ]]; then
+  # Agent .md files
+  for agent_file in "$CANOPY_DIR/agents"/*.md; do
+    [[ -f "$agent_file" ]] || continue
+    agent_name="$(basename "$agent_file")"
+    link_path=".claude/agents/$agent_name"
+    if [[ -e "$link_path" || -L "$link_path" ]]; then
+      skipped "$link_path"
+    else
+      abs_target="$(cd "$(dirname "$agent_file")" && pwd)/$(basename "$agent_file")"
+      ln -s "$abs_target" "$link_path"
+      created "$link_path  →  $abs_target"
+    fi
+  done
+  # Agent resource directories (canopy-skill/, etc.)
+  for agent_dir in "$CANOPY_DIR/agents"/*/; do
+    [[ -d "$agent_dir" ]] || continue
+    dir_name="$(basename "$agent_dir")"
+    link_path=".claude/agents/$dir_name"
+    if [[ -e "$link_path" || -L "$link_path" ]]; then
+      skipped "$link_path"
+    else
+      abs_target="$(cd "$agent_dir" && pwd)"
+      ln -s "$abs_target" "$link_path"
+      created "$link_path  →  $abs_target"
+    fi
+  done
+fi
 
 # ── .claude/rules/skill-resources.md ─────────────────────────────────────────
 if [[ -f "$RULES_FILE" ]]; then
@@ -173,5 +206,6 @@ echo "Done. Your project is wired for Canopy."
 echo ""
 echo "Next steps:"
 echo "  1. Add your skills under .claude/skills/<skill-name>/"
-echo "  2. Add project-wide ops to $PROJECT_OPS"
-echo "  3. Update the submodule later with: git submodule update --remote .claude/canopy"
+echo "  2. Add your agents under .claude/agents/"
+echo "  3. Add project-wide ops to $PROJECT_OPS"
+echo "  4. Update the submodule later with: git submodule update --remote .claude/canopy"
