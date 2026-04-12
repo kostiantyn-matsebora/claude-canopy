@@ -6,10 +6,10 @@ See [README.md](README.md) for overview, quick start, and setup.
 
 ## Framework Agents
 
-`canopy-skill` is a framework **agent** — it creates, modifies, scaffolds, validates, and converts Canopy skills.
+`canopy` is a framework **agent** — it creates, modifies, scaffolds, validates, and converts Canopy skills.
 
 When modifying `FRAMEWORK.md`, `rules/skill-resources.md`, `skills/shared/framework/ops.md`, or `skills/shared/project/ops.md`,
-also update `agents/canopy-skill/policies/optimization-rules.md` to stay in sync.
+also update `agents/canopy/policies/optimization-rules.md` to stay in sync.
 
 ### Agent Format
 
@@ -45,8 +45,8 @@ for each bundled agent and its resource directories, mirroring the skill symlink
 ```
 .claude/                              ← clone or copy of claude-canopy
 ├── agents/
-│   ├── canopy-skill.md             # Framework-bundled agent
-│   └── canopy-skill/               # Agent resource files
+│   ├── canopy.md                   # Framework-bundled agent
+│   └── canopy/                     # Agent resource files
 │       ├── policies/
 │       │   └── optimization-rules.md
 │       ├── schemas/

@@ -25,7 +25,7 @@ misunderstood. When it works, you're not entirely sure why it did.
 * **Resources you can navigate without reading prose.** Schemas, templates, commands, constants, and checklists live in
   organized directories. No hunting through prose. Find what you need. Reuse instantly.
 
-* **No framework to learn to get started.** Tell `canopy-skill` what you need. It scaffolds, validates,
+* **No framework to learn to get started.** Tell `canopy` what you need. It scaffolds, validates,
   and converts skills for you. No learning curve.
 
 ## How it works
@@ -118,8 +118,8 @@ The setup script creates files and links in your project (outside the submodule)
 .claude/
 ├── canopy/                          <- git submodule (never edit here)
 ├── agents/
-│   ├── canopy-skill.md              <- symlinked from canopy; bundled agent
-│   └── canopy-skill/                <- symlinked from canopy; agent resources
+│   ├── canopy.md                    <- symlinked from canopy; bundled agent
+│   └── canopy/                      <- symlinked from canopy; agent resources
 ├── rules/
 │   └── skill-resources.md           <- created by setup; globs cover both dirs
 └── skills/
@@ -135,9 +135,9 @@ The script is idempotent - safe to re-run, never overwrites existing files.
 
 ## Usage
 
-### Using the `canopy-skill` Agent
+### Using the `canopy` Agent
 
-The `canopy-skill` agent handles the full skill lifecycle. Invoke it naturally in Claude Code:
+The `canopy` agent handles the full skill lifecycle. Invoke it naturally in Claude Code:
 
 | Operation | What to say |
 |-----------|-------------|
@@ -231,7 +231,7 @@ Op lookup (ALL_CAPS node -> definition):          Category resources (loaded per
 Canopy is currently a personal project. Issues and PRs welcome once the API stabilizes.
 
 - Keep `docs/FRAMEWORK.md` as the single source of truth
-- `canopy-skill` agent must be updated whenever framework rules change
+- `canopy` agent must be updated whenever framework rules change
 - Framework primitives in `skills/shared/framework/ops.md` are immutable contracts
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR expectations.

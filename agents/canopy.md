@@ -1,5 +1,5 @@
 ---
-name: canopy-skill
+name: canopy
 description: Canopy skill expert. Use when creating a new Canopy skill from a description (CREATE), editing an existing Canopy skill (MODIFY), generating a blank skill skeleton (SCAFFOLD), converting a regular Claude Code skill to Canopy format (CONVERT_TO_CANOPY), evaluating or validating a Canopy skill for errors and optimization (VALIDATE), or converting a Canopy skill back to a regular skill (CONVERT_TO_REGULAR).
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
@@ -317,7 +317,7 @@ Evaluate a Canopy skill for framework errors, warnings, and optimization opportu
 
 1. Locate the skill directory using Glob.
 2. Read all files: `skill.md`, `ops.md` (if present), all category subdir files.
-3. Find and read `optimization-rules.md` using Glob: `**/canopy-skill/policies/optimization-rules.md`
+3. Find and read `optimization-rules.md` using Glob: `**/canopy/policies/optimization-rules.md`
 4. Evaluate the skill. Classify each finding:
    - **Error** — violates a framework rule; must be fixed
    - **Warning** — likely wrong; should be fixed

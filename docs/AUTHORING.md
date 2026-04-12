@@ -1,7 +1,7 @@
 # Authoring Skills Manually
 
 This document covers writing Canopy skills by hand. For the recommended approach — letting
-the `canopy-skill` agent generate, scaffold, or convert skills for you — see the
+the `canopy` agent generate, scaffold, or convert skills for you — see the
 [Usage section](README.md#usage) in the README.
 
 ---
