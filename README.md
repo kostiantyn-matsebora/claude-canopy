@@ -1,106 +1,51 @@
 # Canopy
 
-> A declarative, tree-structured execution framework for Claude Code skills.
+> The tree is the source of truth. Natural language is just one rendering of it.
 
-Canopy lets you define reusable AI agent workflows as **syntax trees of named operations**.
+AI skills written as prose are instructions. Instructions get interpreted. Interpretations
+drift. When a skill fails, you're re-reading sentences trying to figure out which one was
+misunderstood. When it works, you're not entirely sure why it did.
 
-Skills are self-contained, composable, and version-controlled. The tree is the source of truth; natural language is just one rendering of it.
-
-See [claude-canopy-examples](https://github.com/kostiantyn-matsebora/claude-canopy-examples) for a working example project using Canopy as a submodule.
+**Canopy makes skills programs.**
 
 ---
 
-## How It Works
+**Skills that run the same way twice.**  
+Not because you wrote better instructions — because the execution pipeline is explicit.
+The model follows the tree you defined, not its best guess at what you meant.
+
+**Operations you write once and reuse everywhere.**  
+`DEPLOY`, `VERIFY`, `ROLLBACK` — define them once in `ops.md`. Every skill that needs
+them shares the same definition. Change one, every skill updates automatically.
+
+**Execution you can read before it runs.**  
+The tree shows exactly what will happen and in what order — before the model touches a
+single file.
+
+**No framework to learn to get started.**  
+Tell the `canopy-skill` agent what you need. It creates, scaffolds, validates, and
+converts skills for you.
+
+---
 
 ```
-┌────────────────────────────────────────────────────────────────────────────┐
-│  my-skill/skill.md                                                         │
-│                                                                            │
-│  ┌─ Frontmatter ──────────────────────────────────────────────────────┐    │
-│  │  name, description, argument-hint                                  │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-│  ┌─ Preamble ─────────────────────────────────────────────────────────┐    │
-│  │  Parse $ARGUMENTS, set context variables                           │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-│  ┌─ ## Agent (optional) ──────────────────────────────────────────────┐    │
-│  │  **explore** — reads target/, returns schemas/explore-schema.json  │    │
-│  │                         │                                          │    │
-│  │           spawns subagent; result captured as context              │    │
-│  └─────────────────────────┼──────────────────────────────────────────┘    │
-│                            ▼                                               │
-│  ┌─ ## Tree ──────────────────────────────────────────────────────────┐    │
-│  │                                                                    │    │
-│  │  my-skill                                                          │    │
-│  │  ├── EXPLORE >> context      ◄── always first when Agent present   │    │
-│  │  ├── SHOW_PLAN >> a | b      ◄── framework primitive (ops.md L3)   │    │
-│  │  ├── ASK << Go? | Yes | No   ◄── halts until user responds         │    │
-│  │  ├── MY_OP << arg            ◄── skill-local op  (ops.md L1)       │    │
-│  │  ├── PROJECT_OP              ◄── project-wide op (ops.md L2)       │    │
-│  │  ├── IF << condition         ◄── branching; skips false branches   │    │
-│  │  │   └── …                                                         │    │
-│  │  └── ELSE                                                          │    │
-│  │      └── …                                                         │    │
-│  │                                                                    │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-│  ┌─ ## Rules (guardrails) ────────────────────────────────────────────┐    │
-│  │  • Never overwrite without confirmation                            │    │
-│  │  • Always show plan before changes                                 │    │
-│  │  Enforced for the full duration of skill execution                 │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-│  ┌─ ## Response ──────────────────────────────────────────────────────┐    │
-│  │  Declares output format: Summary / Changes / Notes                 │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-└────────────────────────────────────────────────────────────────────────────┘
-
-Op lookup (ALL_CAPS node → definition):          Category resources (loaded per step):
-  1. my-skill/ops.md          (skill-local)        schemas/   → subagent contracts
-  2. shared/project/ops.md    (project-wide)        policies/  → active rules / guardrails
-  3. shared/framework/ops.md  (primitives)          templates/ → fill <token> → write file
-     IF · ELSE · ASK · SHOW_PLAN · VERIFY …        commands/  → run named shell section
-                                                    constants/ → load named values
-                                                    verify/    → post-run checklist
+release
+├── EXPLORE >> current_version | version_files     ← subagent reads your project; typed JSON output
+├── SHOW_PLAN >> new_version | files | changelog   ← always shows the plan before touching anything
+├── ASK << Proceed? | Yes | No                     ← halts until you respond
+├── BUMP_FILES << version_files | new_version      ← named op, defined once in ops.md
+├── IF << CHANGELOG.md exists                      ← branches on real state; false branch is skipped
+│   └── ADD_CHANGELOG_ENTRY << new_version
+└── VERIFY_EXPECTED << verify/verify-expected.md  ← post-run checklist
 ```
 
----
+Seven nodes. Anyone reading this knows exactly what `release` does and in what order.
+`BUMP_FILES` is defined once — every skill that calls it stays in sync. `IF` evaluates
+against real project state; the false branch is never executed.
 
-## Features
+This is Canopy — a declarative execution framework for Claude Code skills.
 
-- **Tree-structured execution** — skills are sequential pipelines with `IF`/`ELSE` branching, not prose instructions
-
-- **Named ops** — reusable operations at three levels: skill-local, project-wide, framework primitives
-
-- **Category resource directories** — schemas, templates, commands, constants, policies, verify — each with defined loading behavior
-
-- **Subagent support** — explore subagents with typed JSON output contracts
-
-- **`canopy-skill` agent** — create, modify, scaffold, validate, and convert skills without writing a line by hand
-
-- **Submodule-friendly** — designed to live at `.claude/canopy/` inside any project
-
----
-
-## Skill Anatomy
-
-Every skill is a `skill.md` file with four sections:
-
-```markdown
----
-name: skill-name
-description: One-line description shown in skill picker.
-argument-hint: "<required-arg> [optional-arg]"
----
-
-Preamble: $ARGUMENTS — parse and set context variables here.
-
----
-
-## Agent          ← optional; declares an explore subagent
-## Tree           ← execution pipeline
-## Rules          ← invariants and safety constraints
-## Response:      ← output format declaration
-```
-
-See [`AUTHORING.md`](AUTHORING.md) for the full manual authoring reference.
+See [claude-canopy-examples](https://github.com/kostiantyn-matsebora/claude-canopy-examples) for a working example project.
 
 ---
 
@@ -217,6 +162,59 @@ claude-canopy/
 | Agent | Description |
 |-------|-------------|
 | `canopy-skill` | Create, modify, scaffold, validate, and convert Canopy skills |
+
+---
+
+## Under the Hood
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│  my-skill/skill.md                                                         │
+│                                                                            │
+│  ┌─ Frontmatter ──────────────────────────────────────────────────────┐    │
+│  │  name, description, argument-hint                                  │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│  ┌─ Preamble ─────────────────────────────────────────────────────────┐    │
+│  │  Parse $ARGUMENTS, set context variables                           │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│  ┌─ ## Agent (optional) ──────────────────────────────────────────────┐    │
+│  │  **explore** — reads target/, returns schemas/explore-schema.json  │    │
+│  │                         │                                          │    │
+│  │           spawns subagent; result captured as context              │    │
+│  └─────────────────────────┼──────────────────────────────────────────┘    │
+│                            ▼                                               │
+│  ┌─ ## Tree ──────────────────────────────────────────────────────────┐    │
+│  │                                                                    │    │
+│  │  my-skill                                                          │    │
+│  │  ├── EXPLORE >> context      ◄── always first when Agent present   │    │
+│  │  ├── SHOW_PLAN >> a | b      ◄── framework primitive (ops.md L3)   │    │
+│  │  ├── ASK << Go? | Yes | No   ◄── halts until user responds         │    │
+│  │  ├── MY_OP << arg            ◄── skill-local op  (ops.md L1)       │    │
+│  │  ├── PROJECT_OP              ◄── project-wide op (ops.md L2)       │    │
+│  │  ├── IF << condition         ◄── branching; skips false branches   │    │
+│  │  │   └── …                                                         │    │
+│  │  └── ELSE                                                          │    │
+│  │      └── …                                                         │    │
+│  │                                                                    │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│  ┌─ ## Rules (guardrails) ────────────────────────────────────────────┐    │
+│  │  • Never overwrite without confirmation                            │    │
+│  │  • Always show plan before changes                                 │    │
+│  │  Enforced for the full duration of skill execution                 │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│  ┌─ ## Response ──────────────────────────────────────────────────────┐    │
+│  │  Declares output format: Summary / Changes / Notes                 │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+└────────────────────────────────────────────────────────────────────────────┘
+
+Op lookup (ALL_CAPS node → definition):          Category resources (loaded per step):
+  1. my-skill/ops.md          (skill-local)        schemas/   → subagent contracts
+  2. shared/project/ops.md    (project-wide)        policies/  → active rules / guardrails
+  3. shared/framework/ops.md  (primitives)          templates/ → fill <token> → write file
+     IF · ELSE · ASK · SHOW_PLAN · VERIFY …        commands/  → run named shell section
+                                                    constants/ → load named values
+                                                    verify/    → post-run checklist
+```
 
 ---
 
