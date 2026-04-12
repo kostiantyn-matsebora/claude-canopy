@@ -14,7 +14,7 @@ body:
       label: Area
       options:
         - README / docs
-        - FRAMEWORK.md
+        - docs/FRAMEWORK.md
         - setup scripts
         - skill resource rules
         - bundled skills

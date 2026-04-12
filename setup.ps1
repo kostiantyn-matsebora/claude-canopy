@@ -22,7 +22,7 @@ Write-Host "Canopy submodule setup"
 Write-Host "----------------------"
 
 # Verify submodule is present
-if (-not (Test-Path "$CanopyDir/FRAMEWORK.md")) {
+if (-not (Test-Path "$CanopyDir/docs/FRAMEWORK.md")) {
     Write-Err "$CanopyDir not found. Run: git submodule add https://github.com/kostiantyn-matsebora/claude-canopy .claude/canopy"
 }
 

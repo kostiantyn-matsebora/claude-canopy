@@ -105,6 +105,37 @@ See [README.md](README.md) for the full skill anatomy reference.
 
 ---
 
+## Workflow Diagram
+
+High-level execution flow of a Canopy skill:
+
+```mermaid
+flowchart TD
+  A([Start skill]) --> B[Parse inputs and context]
+  B --> C{Explore configured?}
+  C -- Yes --> D[Run Explore agent]
+  C -- No --> E[Show plan]
+  D --> E
+  E --> F[Ask for confirmation]
+  F --> G{Proceed?}
+  G -- No --> Z([Stop without changes])
+  G -- Yes --> H[Perform instructions\nrun workflow actions]
+  H --> I{More actions?}
+  I -- Yes --> H
+  I -- No --> J[Verify expected outcomes]
+  J --> K([Return summary response])
+
+  style A fill:#2a3a5a,color:#fff
+  style K fill:#2a5230,color:#fff
+  style Z fill:#7a2020,color:#fff
+```
+
+Source file: [docs/diagrams/workflow.mmd](diagrams/workflow.mmd).
+
+If your Mermaid tool reports "No diagram type detected", open [docs/diagrams/workflow.mmd](diagrams/workflow.mmd) directly or pass only the Mermaid code block content (without surrounding Markdown text).
+
+---
+
 ## Tree Execution Model
 
 The tree is a **sequential pipeline** with branching. Execution is:

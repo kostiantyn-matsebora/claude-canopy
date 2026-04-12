@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="48 12 170 12" fill="none">
+  <!-- Deterministic -->
+  <circle cx="52" cy="18" r="1.2" fill="#1A4731"/>
+  <text x="56" y="20" font-size="6" fill="#1A4731" font-family="Arial, sans-serif" font-weight="bold">Deterministic</text>
+
+  <!-- Reusable -->
+  <circle cx="102" cy="18" r="1.2" fill="#1A4731"/>
+  <text x="106" y="20" font-size="6" fill="#1A4731" font-family="Arial, sans-serif" font-weight="bold">Reusable</text>
+
+  <!-- Readable -->
+  <circle cx="137" cy="18" r="1.2" fill="#1A4731"/>
+  <text x="141" y="20" font-size="6" fill="#1A4731" font-family="Arial, sans-serif" font-weight="bold">Readable</text>
+
+  <!-- Organized -->
+  <circle cx="172" cy="18" r="1.2" fill="#1A4731"/>
+  <text x="176" y="20" font-size="6" fill="#1A4731" font-family="Arial, sans-serif" font-weight="bold">Organized</text>
+</svg>

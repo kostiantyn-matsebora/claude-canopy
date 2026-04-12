@@ -25,7 +25,7 @@ echo "Canopy submodule setup"
 echo "----------------------"
 
 # Verify submodule is present
-if [[ ! -f "$CANOPY_DIR/FRAMEWORK.md" ]]; then
+if [[ ! -f "$CANOPY_DIR/docs/FRAMEWORK.md" ]]; then
   error "$CANOPY_DIR not found. Run: git submodule add https://github.com/kostiantyn-matsebora/claude-canopy .claude/canopy"
 fi
 

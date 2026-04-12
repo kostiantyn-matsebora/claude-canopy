@@ -13,7 +13,7 @@ This repo is the framework itself. Good contributions include:
 
 If a change affects framework behavior, keep these files in sync:
 
-- `FRAMEWORK.md`
+- `docs/FRAMEWORK.md`
 - `rules/skill-resources.md`
 - `skills/shared/framework/ops.md`
 - `agents/canopy-skill/policies/optimization-rules.md`
@@ -24,7 +24,7 @@ If a change affects framework behavior, keep these files in sync:
 2. Create a branch from `master`.
 3. Make focused changes.
 4. Update docs when behavior changes.
-5. Update `CHANGELOG.md` for user-visible changes.
+5. Update `docs/CHANGELOG.md` for user-visible changes.
 6. Open a pull request.
 
 ## Style
