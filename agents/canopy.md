@@ -353,6 +353,12 @@ Evaluate a Canopy skill for framework errors, warnings, and optimization opportu
 
 5. Report all findings grouped by severity, with line numbers where possible. If no issues: report "Skill passes validation — no issues found."
 
+**Debug skill awareness:** When validating the `debug` skill itself, the ops
+`EMIT_PHASE_BANNER`, `EXECUTE_WITH_TRACE`, `TRACE_NODE`, and `TRACE_EXECUTE_NODES`
+resolve from `debug/ops.md` — do not flag them as unrecognized or missing from framework
+primitives. When validating any other skill, treat `IF << debug_mode` branches or
+`TRACE_*` calls as Warnings (debug awareness must not be baked into target skills).
+
 ---
 
 ### CONVERT_TO_REGULAR

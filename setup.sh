@@ -67,7 +67,7 @@ if [[ -d "$CANOPY_DIR/agents" ]]; then
       created "$link_path  →  $abs_target"
     fi
   done
-  # Agent resource directories (canopy-skill/, etc.)
+  # Agent resource directories (canopy/, etc.)
   for agent_dir in "$CANOPY_DIR/agents"/*/; do
     [[ -d "$agent_dir" ]] || continue
     dir_name="$(basename "$agent_dir")"

@@ -222,6 +222,33 @@ One concern per file. Do not bundle unrelated content into a single resource fil
 
 ---
 
+## Testing and Debugging
+
+Use the `debug` meta-skill to trace any skill's execution in real time:
+
+```
+/canopy-debug <skill-name> [arguments]
+```
+
+This emits a phase banner at the start of each phase and a full tree-state block before
+and after every node, so you can see exactly where execution is at any moment. No
+changes to the target skill are required.
+
+Example — tracing `bump-version`:
+
+```
+/canopy-debug bump-version 2.1.0
+```
+
+You will see:
+- `╔══ Phase 1 of 4: Initialize ═══...` banner
+- Tree blocks with `→` advancing through each node as it executes, then `✓` on completion
+- `⊘` on branches that were not taken, `⏸` while waiting for your input on `ASK` nodes
+
+See [`FRAMEWORK.md` — Debug Mode](FRAMEWORK.md#debug-mode) for the full reference.
+
+---
+
 ## Full Specification
 
 See [`FRAMEWORK.md`](FRAMEWORK.md) for the complete framework specification, including

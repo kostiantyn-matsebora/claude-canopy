@@ -319,3 +319,37 @@ subagent contract.
 
 When using Canopy as a submodule, create a project-level `rules/skill-resources.md` that
 overrides the canopy default — update the globs and op lookup paths to match your layout.
+
+---
+
+## Debug Mode
+
+The `debug` meta-skill wraps any other skill with live phase banners and per-node tree
+tracing. Invoke as:
+
+```
+/canopy-debug <skill-name> [arguments]
+```
+
+Example:
+
+```
+/canopy-debug bump-version 2.1.0
+```
+
+Debug mode emits to the stream as the skill runs:
+
+- A **phase banner** at the start of each execution phase (Initialize, Explore, Tree
+  Execution, Verify, Response) — only phases active for the given skill are shown
+- A **tree-state block** before and after each node, showing all nodes with status
+  symbols: `→` executing, `✓` done, `⊘` skipped, `⏸` waiting, `⟳` subagent, `✗` failed,
+  `⊙` pending
+- **Input/output values** for nodes with formal `<<` / `>>` declarations
+
+No changes to existing skills are required. The feature is entirely contained in
+`skills/canopy-debug/` and activated only when the user calls `/canopy-debug`.
+
+The setup scripts auto-discover `skills/canopy-debug/` and create the appropriate
+symlink or junction — no manual wiring needed after running setup.
+
+See `skills/canopy-debug/policies/canopy-debug-output.md` for the full visual protocol.

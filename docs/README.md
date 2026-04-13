@@ -25,6 +25,10 @@ misunderstood. When it works, you're not entirely sure why it did.
 * **Resources you can navigate without reading prose.** Schemas, templates, commands, constants, and checklists live in
   organized directories. No hunting through prose. Find what you need. Reuse instantly.
 
+* **Failures you can trace to a single node.** When a skill misbehaves, the tree tells you exactly
+  where it went wrong. No re-reading prose. Use `/canopy-debug <skill>` to replay any skill with
+  live phase banners and per-node tracing — pin the failing node, fix its op definition, move on.
+
 * **No framework to learn to get started.** Tell `canopy` what you need. It scaffolds, validates,
   and converts skills for you. No learning curve.
 
