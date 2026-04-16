@@ -12,6 +12,18 @@ Make targeted changes to an existing Canopy skill.
    | `<symbol or section>` | `<file>` | `<what will change>` | `<why>` |
 
    Then list: new files to create | files to delete (if any).
+
+   Then emit a fenced `apply` block:
+
+   ```apply
+   op: MODIFY
+   skill: <name>
+   changes:
+     - <file-path> | <action> | <detail>
+   ```
+
+   If re-invoked after this block is visible in context, skip steps 1–4 and apply the listed changes directly.
+
 5. Ask: **"Proceed? | Yes | Adjust | No"** — wait for response before touching any file.
 6. Apply changes:
    - Read `policies/preservation-rules.md` before making any edits

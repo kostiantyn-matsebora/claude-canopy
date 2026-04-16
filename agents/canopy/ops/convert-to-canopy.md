@@ -21,6 +21,20 @@ A "regular skill" is any `.md` skill file that uses prose or numbered `## Steps`
    | `<description>` | `<source section>` | `<category/filename.md>` or `shared/...` | `<constants/policies/schemas/…>` | `<decision-rule rationale>` |
 
    Then show: tree structure preview | ops to create | skill name | shared references used.
+
+   Then emit a fenced `apply` block:
+
+   ```apply
+   op: CONVERT_TO_CANOPY
+   source: <source-file>
+   skill: <name>
+   tree-syntax: <markdown-list|box-drawing>
+   changes:
+     - <file-path> | <action> | <detail>
+   ```
+
+   If re-invoked after this block is visible in context, skip steps 1–5 and apply the listed changes directly (proceed to step 7).
+
 6. Ask: **"Proceed? | Yes | Adjust | No"** — wait for response before touching any file.
 7. Determine target skill name (infer from file name; ask if ambiguous).
 8. If `.claude/skills/<skill_name>/` already exists: Ask **"Directory exists. | Overwrite | Cancel"**

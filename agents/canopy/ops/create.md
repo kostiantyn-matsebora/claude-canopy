@@ -16,7 +16,20 @@ Create a new Canopy skill from a description.
 6. Read `shared/project/ops.md`, `shared/framework/ops.md`, and all `shared/project/<category>/` files.
    - For each candidate op: if an equivalent already exists in shared, reference it — do not redefine it skill-locally
    - For each candidate resource file: if equivalent content already exists in a shared category file, reference that file — do not duplicate it
-7. Show plan: skill name | tree structure preview | files to create (marking shared references vs new files)
+7. Show plan: skill name | tree structure preview | files to create (marking shared references vs new files).
+
+   Then emit a fenced `apply` block:
+
+   ```apply
+   op: CREATE
+   skill: <name>
+   tree-syntax: <markdown-list|box-drawing>
+   changes:
+     - <file-path> | create | <brief description>
+   ```
+
+   If re-invoked after this block is visible in context, skip steps 1–7 and apply the listed changes directly.
+
 8. Ask: **"Proceed? | Yes | Adjust plan | No"** — if adjusting, accept clarifications and re-show plan.
 9. Generate and write files:
    - `skill.md` — frontmatter inferred from description; Tree, Rules, Response sections

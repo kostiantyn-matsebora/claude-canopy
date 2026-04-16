@@ -7,6 +7,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.8.1] — 2026-04-16
+
+### Changed
+
+- `agents/canopy/ops/improve.md`, `modify.md`, `refactor-skills.md`, `convert-to-canopy.md`, `create.md`, `scaffold.md`, `convert-to-regular.md` — all confirmation-pause ops now emit a fenced `apply` block (op name, skill name, per-file change list) immediately before asking "Proceed?"; if re-invoked after the block is visible in context the agent skips analysis and applies directly, preventing plan context loss across invocations
+- `agents/canopy/ops/help.md` — corrected Claude Code CLI invocation section: `/canopy` invokes a skill, not the agent; natural language requests auto-apply the agent from `.claude/agents/canopy.md`; explicit form documented as `Follow .claude/agents/canopy.md and <request>`
+
+---
+
 ## [0.8.0] — 2026-04-16
 
 ### Added

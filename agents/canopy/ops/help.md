@@ -20,13 +20,19 @@ Framework source: https://github.com/kostiantyn-matsebora/claude-canopy
 
 ### Claude Code CLI
 
-Use the `/canopy` slash command directly:
+The canopy agent is not a slash command — `/canopy` would invoke a skill, not the agent. Address Claude directly with a natural language request; the agent instructions are picked up from `.claude/agents/canopy.md` automatically:
 
 ```
-/canopy convert list-skills to canopy
-/canopy validate review-backend
-/canopy improve review-api
-/canopy help
+improve bump-version
+validate review-backend
+convert list-skills to canopy
+create a skill that bumps the version and updates the changelog
+```
+
+To be explicit, prefix your request with the agent path:
+
+```
+Follow .claude/agents/canopy.md and improve bump-version
 ```
 
 ### VS Code Copilot Chat
