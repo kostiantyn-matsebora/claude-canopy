@@ -7,6 +7,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.8.0] — 2026-04-16
+
+### Added
+
+- `agents/canopy/ops/` — per-operation procedure files extracted from `agents/canopy.md`: `create.md`, `modify.md`, `scaffold.md`, `convert-to-canopy.md`, `validate.md`, `convert-to-regular.md`, `improve.md`, `advise.md`, `refactor-skills.md`, `help.md`
+- `agents/canopy/constants/` — extracted lookup tables: `category-dirs.md`, `control-flow-notation.md`, `operation-detection.md`, `operations-dispatch.md`
+- `agents/canopy/verify/` — expected-state checklists for `VERIFY_EXPECTED` per operation: `create-expected.md`, `modify-expected.md`, `scaffold-expected.md`, `convert-to-canopy-expected.md`, `convert-to-regular-expected.md`, `improve-expected.md`, `refactor-skills-expected.md`
+- `agents/canopy/policies/skill-structure-rules.md`, `writing-rules.md`, `op-naming-rules.md`, `subagent-rules.md`, `debug-rules.md`, `preservation-rules.md`, `category-decision-flowchart.md`, `conversion-expansion-rules.md` — `optimization-rules.md` decomposed into targeted single-concern policy files
+- New operations on the `canopy` agent: `IMPROVE` (fix violations, re-categorise resources, align with framework), `ADVISE` (read-only "how to" plans), `REFACTOR_SKILLS` (extract ops/resources shared across > 2 skills to `shared/`), `HELP` (usage reference)
+- `skills/canopy-help/SKILL.md` — read-only skill that emits the canopy agent help reference or a specific operation procedure
+
+### Changed
+
+- `agents/canopy.md` — inline operation procedures and constants replaced with `Read <category>/<file>` references; tree examples expanded with a full `release` skill illustration; `REFACTOR_SKILLS` and `HELP` added to operation detection; two new rules added (no duplicate shared ops/resources; verify references after every change)
+- `agents/canopy/policies/optimization-rules.md` — now an index table pointing to the decomposed policy files
+- `agents/canopy/schemas/explore-schema.json` — `existing_resources` field updated to reference new policy file names
+- `docs/FRAMEWORK.md`, `CLAUDE.md` — directory layout updated to show `ops/`, `constants/`, `verify/` under `agents/canopy/`; sync-required note updated to reference `agents/canopy/policies/` instead of the single `optimization-rules.md`
+- `docs/README.md` — usage table extended with IMPROVE, ADVISE, REFACTOR_SKILLS, HELP operations
+
+---
+
 ## [0.7.0] — 2026-04-13
 
 ### Added

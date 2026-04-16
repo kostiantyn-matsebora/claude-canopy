@@ -150,11 +150,27 @@ The `canopy` agent handles the full skill lifecycle. Invoke it naturally in Clau
 | **Scaffold** | "Scaffold a blank skill called api-docs" |
 | **Convert to Canopy** | "Convert my old deploy.md skill to canopy format" |
 | **Validate** | "Validate the bump-version skill" |
+| **Improve** | "Improve the deploy-service skill" |
+| **Advise** | "How should I add a verify step to the review-api skill?" |
+| **Refactor skills** | "Refactor skills — extract shared ops" |
 | **Convert to regular** | "Convert the review-file skill back to a plain skill" |
+| **Help** | "What can the canopy agent do?" |
 
 For **Create** and **Scaffold**, the agent asks your preferred tree syntax - **markdown list** (`*` nested bullets) or **box-drawing** (fenced tree characters) - before writing anything.
 
 Every operation shows a plan and asks for confirmation before making changes.
+
+### Using the `canopy-help` Skill
+
+`canopy-help` is a lightweight read-only skill that emits the canopy agent reference without invoking the agent itself. Use it when you just want to browse the operations list or look up a specific procedure.
+
+```
+/canopy-help
+/canopy-help improve
+/canopy-help refactor-skills
+```
+
+With no argument it prints the full operations reference. With an operation name it prints that operation's procedure verbatim.
 
 ### Writing a Skill Manually
 

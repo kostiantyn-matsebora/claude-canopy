@@ -9,7 +9,7 @@ See [README.md](README.md) for overview, quick start, and setup.
 `canopy` is a framework **agent** — it creates, modifies, scaffolds, validates, and converts Canopy skills.
 
 When modifying `FRAMEWORK.md`, `rules/skill-resources.md`, `skills/shared/framework/ops.md`, or `skills/shared/project/ops.md`,
-also update `agents/canopy/policies/optimization-rules.md` to stay in sync.
+also update the relevant policy files in `agents/canopy/policies/` to stay in sync.
 
 ### Agent Format
 
@@ -47,13 +47,15 @@ for each bundled agent and its resource directories, mirroring the skill symlink
 ├── agents/
 │   ├── canopy.md                   # Framework-bundled agent
 │   └── canopy/                     # Agent resource files
-│       ├── policies/
-│       │   └── optimization-rules.md
+│       ├── constants/              # Lookup tables and dispatch maps
+│       ├── ops/                    # Per-operation procedure files
+│       ├── policies/               # Rule files (skill-structure, writing, op-naming, …)
 │       ├── schemas/
 │       │   └── explore-schema.json
-│       └── templates/
-│           ├── skill.md
-│           └── ops.md
+│       ├── templates/
+│       │   ├── skill.md
+│       │   └── ops.md
+│       └── verify/                 # Expected-state checklists per operation
 ├── rules/
 │   └── skill-resources.md          # Ambient rules — auto-applied to all skill files
 └── skills/
@@ -67,12 +69,13 @@ for each bundled agent and its resource directories, mirroring the skill symlink
     └── <your-skill>/
         ├── skill.md                # Skill definition — frontmatter + Tree + Rules
         ├── ops.md                  # Skill-local op definitions
-        ├── schemas/                # Subagent output contracts, input schemas
-        ├── templates/              # YAML/Markdown templates with <token> placeholders
-        ├── constants/              # Named values loaded into step context
-        ├── policies/               # Rules applied for the duration of the skill
+        ├── schemas/                # Subagent output contracts, input/config file shapes
+        ├── templates/              # Fillable output documents with <token> placeholders
         ├── commands/               # PowerShell / shell scripts with named sections
-        └── verify/                 # Expected-state checklists
+        ├── constants/              # Read-only lookup data (tables, enum values, defaults)
+        ├── checklists/             # Evaluation criteria lists iterated by ops
+        ├── policies/               # Behavioural constraints governing skill execution
+        └── verify/                 # Expected-state checklists for VERIFY_EXPECTED
 ```
 
 ### As Git Submodule (recommended for projects)
@@ -298,15 +301,16 @@ When a tree node or op step says `Read <category>/<file>`, the directory determi
 
 | Directory | File types | Behavior |
 |-----------|------------|----------|
-| `schemas/` | `.json`, `.md` | Use as subagent output contract or input schema |
-| `templates/` | `.yaml`, `.md`, `.yaml.gotmpl` | Substitute `<token>` placeholders from step context; write to target path |
-| `commands/` | `.ps1`, `.sh` | Execute the named section; capture declared output values. Sections use `# === Section Name ===` headers. |
-| `constants/` | `.md` | Load all named values into step context |
-| `policies/` | `.md` | Apply as active rules for the skill's duration |
-| `verify/` | `.md` | Use as expected-state checklist during verification |
+| `schemas/` | `.json`, `.md` | Structure definitions for data the skill reads or writes: subagent output contracts, input/config file shapes, report template skeletons |
+| `templates/` | `.yaml`, `.md`, `.yaml.gotmpl` | Fillable output documents with `<token>` placeholders substituted from context and written to a target path |
+| `commands/` | `.ps1`, `.sh` | Executable scripts invoked by name via a named section (`# === Section Name ===`); output captured into context |
+| `constants/` | `.md` | Read-only lookup data referenced by ops: mapping tables, enum-like value lists, fixed configuration values, default branch/path names |
+| `checklists/` | `.md` | Evaluation criteria lists (`- [ ] ...`) that ops iterate over to assess compliance or correctness |
+| `policies/` | `.md` | Behavioural constraints governing skill execution: what the skill must/must not do, consent requirements, output rendering protocols |
+| `verify/` | `.md` | Expected-state checklists consumed exclusively by `VERIFY_EXPECTED` |
 
 **Reference line pattern:** `Read \`<category>/<file>\` for <brief description>.`
-Load at the point of use — not front-loaded at the top of the tree.
+Load at point of use in the tree — never front-load all reads at the top.
 
 ---
 

@@ -194,12 +194,13 @@ Structured content belongs in subdirectories alongside `skill.md`, not inline in
 
 | Directory | File types | Behavior |
 |-----------|------------|---------|
-| `schemas/` | `.json`, `.md` | Subagent output contracts or input schemas |
-| `templates/` | `.yaml`, `.md`, `.yaml.gotmpl` | Substitute `<token>` placeholders from context; write to target path |
-| `commands/` | `.ps1`, `.sh` | Execute named section (`# === Section Name ===`); capture output values |
-| `constants/` | `.md` | Load all named values into step context |
-| `policies/` | `.md` | Active rules for the skill's full duration |
-| `verify/` | `.md` | Expected-state checklists for `VERIFY_EXPECTED` |
+| `schemas/` | `.json`, `.md` | Structure definitions for data the skill reads or writes: subagent output contracts, input/config file shapes, report template skeletons |
+| `templates/` | `.yaml`, `.md`, `.yaml.gotmpl` | Fillable output documents with `<token>` placeholders substituted from context and written to a target path |
+| `commands/` | `.ps1`, `.sh` | Executable scripts invoked by name via a named section (`# === Section Name ===`); output captured into context |
+| `constants/` | `.md` | Read-only lookup data referenced by ops: mapping tables, enum-like value lists, fixed configuration values, default branch/path names |
+| `checklists/` | `.md` | Evaluation criteria lists (`- [ ] ...`) that ops iterate over to assess compliance or correctness |
+| `policies/` | `.md` | Behavioural constraints governing skill execution: what the skill must/must not do, consent requirements, output rendering protocols |
+| `verify/` | `.md` | Expected-state checklists consumed exclusively by `VERIFY_EXPECTED` |
 
 Reference these files at the point of use in the tree, not all at the top:
 
