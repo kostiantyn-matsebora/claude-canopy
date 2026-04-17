@@ -97,6 +97,7 @@ Download Canopy as plain files into `.claude/`. Your project's git tracks everyt
 mkdir -p .claude
 curl -L https://github.com/kostiantyn-matsebora/claude-canopy/archive/refs/heads/master.tar.gz \
   | tar -xz --strip-components=1 -C .claude
+rm -f .claude/CLAUDE.md
 ```
 
 Add your skills under `.claude/skills/<skill-name>/`. Update Canopy manually when needed.
@@ -114,6 +115,10 @@ git submodule add https://github.com/kostiantyn-matsebora/claude-canopy .claude/
 # 2. Run the setup script to wire Claude Code to both canopy internals and your skills
 bash .claude/canopy/setup.sh        # Linux / macOS
 pwsh .claude/canopy/setup.ps1       # Windows
+
+# 3. Remove the Canopy repo's CLAUDE.md — it lives inside the submodule and is not
+#    auto-loaded by Claude Code, but deleting it keeps .claude/canopy/ uncluttered
+rm .claude/canopy/CLAUDE.md
 ```
 
 The setup script creates files and links in your project (outside the submodule):
