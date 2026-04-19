@@ -65,13 +65,14 @@ if (Test-Path $AgentsDir) {
             if (Test-Path $LinkPath) {
                 Write-Skipped $LinkPath
             } else {
-                $RelTarget = "../canopy/agents/$($_.Name)"
+                $AgentFile = $_
+                $RelTarget = "../canopy/agents/$($AgentFile.Name)"
                 try {
                     New-Item -ItemType SymbolicLink -Path $LinkPath -Target $RelTarget | Out-Null
                     Write-Created "$LinkPath -> $RelTarget"
                 } catch {
                     # Fallback: copy if symlink creation requires elevated privileges
-                    $AbsTarget = Resolve-Path $_.FullName
+                    $AbsTarget = Resolve-Path $AgentFile.FullName
                     Copy-Item $AbsTarget $LinkPath
                     Write-Created "$LinkPath  (copied; symlink requires Developer Mode)"
                 }
