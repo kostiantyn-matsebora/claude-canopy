@@ -72,9 +72,9 @@ Reference pattern in skill.md: `Read \`<category>/<file>\` for <brief descriptio
 - `agents/canopy/verify/` — expected-state checklists for `VERIFY_EXPECTED` per operation
 - `agents/canopy/templates/` — `skill.md` and `ops.md` skeletons used by SCAFFOLD
 
-## Setup (Submodule Usage)
+## Setup
 
-After `git submodule add <canopy-url> .claude/canopy`:
+Canopy supports three distribution methods (submodule, subtree, installer). In all cases, once Canopy is at `.claude/canopy/`, run:
 
 ```bash
 bash .claude/canopy/setup.sh   # Linux/macOS

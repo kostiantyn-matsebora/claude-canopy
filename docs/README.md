@@ -89,20 +89,24 @@ pyproject.toml, and other version-bearing files; lists all files needing updates
 
 ## Quick Start
 
-### Option A - Vendored (simplest)
+### Option A - Installer (simplest)
 
-Download Canopy as plain files into `.claude/`. Your project's git tracks everything - Canopy files and your own skills together.
+One command installs the latest release and wires Claude Code. Re-run with a version tag to update.
 
 ```bash
-mkdir -p .claude
-curl -L https://github.com/kostiantyn-matsebora/claude-canopy/archive/refs/heads/master.tar.gz \
-  | tar -xz --strip-components=1 -C .claude
-rm -f .claude/CLAUDE.md
+# Linux / macOS
+curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.sh | bash
+
+# Install a specific version
+curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.sh | bash -s -- v1.0.0
+
+# Windows
+irm https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.ps1 | iex
 ```
 
-Add your skills under `.claude/skills/<skill-name>/`. Update Canopy manually when needed.
+The installer writes a `.canopy-version` file at the project root. Commit it so collaborators know which version to reinstall on a fresh clone. Update Canopy by re-running the installer with the new version tag.
 
-> **Do not use `git clone` here.** That creates a nested `.git` repo - your project's git will not track any files inside `.claude/`, including your own skills.
+> **Do not use `git clone` here.** That creates a nested `.git` repo — your project's git will not track any files inside `.claude/`, including your own skills.
 
 ### Option B - Git Submodule (recommended)
 
@@ -139,6 +143,33 @@ The setup script creates files and links in your project (outside the submodule)
 ```
 
 The script is idempotent - safe to re-run, never overwrites existing files.
+
+### Option C - Git Subtree (recommended for teams)
+
+Files live directly in your repo history — no extra clone steps, no submodule complexity. On Unix/macOS, commit the generated symlinks once; collaborators get a working setup on `git clone` with no extra steps.
+
+```bash
+# 1. Add Canopy as a subtree
+git subtree add --prefix=.claude/canopy \
+  https://github.com/kostiantyn-matsebora/claude-canopy main --squash
+
+# 2. Wire Claude Code (creates relative symlinks + config stubs)
+bash .claude/canopy/setup.sh        # Linux / macOS
+pwsh .claude/canopy/setup.ps1       # Windows
+
+# 3. On Unix/macOS: commit the symlinks — collaborators get them on git clone
+git add .claude/skills .claude/agents .claude/rules
+git commit -m "chore: add Canopy via subtree and wire symlinks"
+```
+
+Update Canopy later — no need to re-run setup:
+
+```bash
+git subtree pull --prefix=.claude/canopy \
+  https://github.com/kostiantyn-matsebora/claude-canopy main --squash
+```
+
+> Compared to submodule: subtree squashes Canopy commits into your repo history (no `.gitmodules`, no `--recurse-submodules` on clone). Compared to installer: files are versioned in git, so `git log .claude/canopy/` shows what changed.
 
 ---
 
