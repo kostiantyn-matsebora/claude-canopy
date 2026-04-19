@@ -2,7 +2,7 @@
 
 After CREATE completes successfully:
 
-- [ ] `skill.md` exists at `<skill_dir>/skill.md`
+- [ ] `skill.md` exists at `<skill_dir>/skill.md` under the platform-correct base path (`.claude/skills/` for Claude Code, `.github/skills/` for Copilot)
 - [ ] `skill.md` contains `## Tree`, `## Rules`, and `## Response:` sections
 - [ ] `skill.md` contains no inline JSON, YAML, tables, scripts, or code blocks
 - [ ] `ops.md` exists if any ops were defined that are not covered by shared
