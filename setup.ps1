@@ -5,7 +5,7 @@
 #   pwsh install.ps1 [version]
 #
 # Creates the wiring files that Claude Code needs to see both canopy internals
-# and your own skills. Safe to re-run — existing files are never overwritten.
+# and your own skills. Safe to re-run - existing files are never overwritten.
 
 param()
 
@@ -34,7 +34,7 @@ New-Item -ItemType Directory -Force -Path ".claude/rules" | Out-Null
 New-Item -ItemType Directory -Force -Path ".claude/skills/shared/project" | Out-Null
 New-Item -ItemType Directory -Force -Path ".claude/agents" | Out-Null
 
-# ── Junction links for bundled canopy skills ──────────────────────────────────
+# -- Junction links for bundled canopy skills ----------------------------------
 # VS Code does not scan inside git submodules for skill discovery.
 # Create directory junctions in .claude/skills/ so each bundled skill is visible.
 Get-ChildItem "$CanopyDir/skills" -Directory |
@@ -46,19 +46,19 @@ Get-ChildItem "$CanopyDir/skills" -Directory |
         } else {
             $AbsTarget = Resolve-Path $_.FullName
             New-Item -ItemType Junction -Path $JunctionPath -Target $AbsTarget | Out-Null
-            Write-Created "$JunctionPath  →  $AbsTarget"
+            Write-Created "$JunctionPath -> $AbsTarget"
         }
     }
 
-# ── Links for bundled canopy agents ───────────────────────────────────────────
-# Claude Code looks for agents in .claude/agents/ — link each bundled agent
+# -- Links for bundled canopy agents -------------------------------------------
+# Claude Code looks for agents in .claude/agents/ - link each bundled agent
 # file and its resource directory so they are visible outside the submodule.
 # Note: file symbolic links (SymbolicLink) require Windows Developer Mode or
 # admin privileges. If New-Item -ItemType SymbolicLink fails, copy the .md files
 # manually into .claude/agents/.
 $AgentsDir = "$CanopyDir/agents"
 if (Test-Path $AgentsDir) {
-    # Agent .md files — use SymbolicLink (files, not directories)
+    # Agent .md files - use SymbolicLink (files, not directories)
     Get-ChildItem $AgentsDir -Filter "*.md" -File |
         ForEach-Object {
             $LinkPath = ".claude/agents/$($_.Name)"
@@ -68,16 +68,16 @@ if (Test-Path $AgentsDir) {
                 $RelTarget = "../canopy/agents/$($_.Name)"
                 try {
                     New-Item -ItemType SymbolicLink -Path $LinkPath -Target $RelTarget | Out-Null
-                    Write-Created "$LinkPath  →  $RelTarget"
+                    Write-Created "$LinkPath -> $RelTarget"
                 } catch {
                     # Fallback: copy if symlink creation requires elevated privileges
                     $AbsTarget = Resolve-Path $_.FullName
                     Copy-Item $AbsTarget $LinkPath
-                    Write-Created "$LinkPath  (copied — symlink requires Developer Mode)"
+                    Write-Created "$LinkPath  (copied; symlink requires Developer Mode)"
                 }
             }
         }
-    # Agent resource directories — use Junction (directory links work without elevation)
+    # Agent resource directories - use Junction (directory links work without elevation)
     Get-ChildItem $AgentsDir -Directory |
         ForEach-Object {
             $JunctionPath = ".claude/agents/$($_.Name)"
@@ -86,12 +86,12 @@ if (Test-Path $AgentsDir) {
             } else {
                 $AbsTarget = Resolve-Path $_.FullName
                 New-Item -ItemType Junction -Path $JunctionPath -Target $AbsTarget | Out-Null
-                Write-Created "$JunctionPath  →  $AbsTarget"
+                Write-Created "$JunctionPath -> $AbsTarget"
             }
         }
 }
 
-# ── .claude/rules/skill-resources.md ─────────────────────────────────────────
+# -- .claude/rules/skill-resources.md -----------------------------------------
 if (Test-Path $RulesFile) {
     Write-Skipped $RulesFile
 } else {
@@ -127,13 +127,13 @@ When a step or tree node contains an ALL_CAPS identifier:
 2. Fall back to `.claude/skills/shared/project/ops.md` (project-wide ops)
 3. Fall back to `.claude/canopy/skills/shared/framework/ops.md` (framework primitives)
 
-`IF`, `ELSE_IF`, `ELSE`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED` are primitives — always in `shared/framework/ops.md`.
+`IF`, `ELSE_IF`, `ELSE`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED` are primitives -- always in `shared/framework/ops.md`.
 
 ## Tree format
 
 When a skill has `## Tree` instead of `## Steps`: execute the tree top-to-bottom as a sequential pipeline.
 
-Each node is either an op call (`OP_NAME << inputs >> outputs`) or natural language — both are valid.
+Each node is either an op call (`OP_NAME << inputs >> outputs`) or natural language -- both are valid.
 `IF` nodes branch on condition; both branches may be op calls or natural language.
 Op definitions in `<skill>/ops.md`, `shared/project/ops.md`, and `shared/framework/ops.md` may also use tree notation internally.
 
@@ -147,7 +147,7 @@ When a skill has a `## Agent` section declaring `**explore**`:
     Write-Created $RulesFile
 }
 
-# ── .claude/skills/shared/project/ops.md ─────────────────────────────────────
+# -- .claude/skills/shared/project/ops.md -------------------------------------
 if (Test-Path $ProjectOps) {
     Write-Skipped $ProjectOps
 } else {
@@ -166,7 +166,7 @@ Op definitions may use tree notation internally (same syntax as skill.md `## Tre
 
 ---
 
-# ── Examples (commented out — uncomment and adapt for your project) ──────────
+# -- Examples (commented out -- uncomment and adapt for your project) ----------
 
 # ## MY_DEPLOY << dir
 #
@@ -190,22 +190,22 @@ Op definitions may use tree notation internally (same syntax as skill.md `## Tre
 # Write `{fields}` to `<path>` in the project secret store.
 # Patch if path exists; create if new.
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ------------------------------------------------------------------------------
 '@ | Set-Content -Encoding UTF8 $ProjectOps
     Write-Created $ProjectOps
 }
 
-# ── .claude/skills/shared/ops.md ─────────────────────────────────────────────
+# -- .claude/skills/shared/ops.md ----------------------------------------------
 if (Test-Path $SharedOps) {
     Write-Skipped $SharedOps
 } else {
     @'
-# Shared Ops — Redirected
+# Shared Ops -- Redirected
 
 This file has been split. Use the files below directly or rely on the three-level lookup order in `skill-resources.md`.
 
-- **Framework primitives** (IF, ASK, SHOW_PLAN, …) → `.claude/canopy/skills/shared/framework/ops.md`
-- **Project-wide ops** (project-specific patterns) → `.claude/skills/shared/project/ops.md`
+- **Framework primitives** (IF, ASK, SHOW_PLAN, ...) -> `.claude/canopy/skills/shared/framework/ops.md`
+- **Project-wide ops** (project-specific patterns) -> `.claude/skills/shared/project/ops.md`
 '@ | Set-Content -Encoding UTF8 $SharedOps
     Write-Created $SharedOps
 }
