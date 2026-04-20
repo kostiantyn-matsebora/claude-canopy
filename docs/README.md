@@ -187,11 +187,17 @@ git subtree pull --prefix=.claude/canopy \
 
 The `canopy` agent handles the full skill lifecycle.
 
-**Claude Code:**
+**Claude Code** — use the `/canopy` slash command (shortest form):
+
+```
+/canopy create a skill that bumps semantic versions across project files
+/canopy validate the bump-version skill
+```
+
+Or the explicit form if the slash command is unavailable:
 
 ```
 Follow .claude/agents/canopy.md and create a skill that bumps semantic versions
-Follow .claude/agents/canopy.md and validate the bump-version skill
 ```
 
 **GitHub Copilot:**
