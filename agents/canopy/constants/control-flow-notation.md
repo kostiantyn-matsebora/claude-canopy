@@ -15,3 +15,5 @@ Replace all ad-hoc control flow patterns with standard Canopy ops:
 | `else: do Z` (in steps) | `ELSE` chained after `IF` or `ELSE_IF` |
 | early return from op (no error) | `BREAK` |
 | fatal stop with message | `END <message>` |
+| `if X: do Y / else if Y: do Z / ...` repeated over one value | `SWITCH << X` with `CASE << Y` branches |
+| `ELSE_IF` chain matching `value == "a"`, `value == "b"`, … | `SWITCH << value` with `CASE << "a"`, `CASE << "b"`, … |

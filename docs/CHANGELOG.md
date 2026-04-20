@@ -7,6 +7,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.11.0] — 2026-04-20
+
+### Added
+
+- `skills/shared/framework/ops.md` — three new control-flow primitives: `SWITCH << expression`, `CASE << value`, `DEFAULT`; `SWITCH` evaluates an expression once and executes the first matching `CASE`; `DEFAULT` fires when no `CASE` matched; use in place of long `IF/ELSE_IF` chains that branch on a single value
+
+### Changed
+
+- `docs/FRAMEWORK.md` — added `SWITCH/CASE/DEFAULT` to Control Flow Primitives section and Op Registries table; updated primitives list in Op Lookup Order
+- `docs/AUTHORING.md` — added `SWITCH`, `CASE`, `DEFAULT` to Framework Primitives table
+- `agents/canopy/constants/control-flow-notation.md` — added migration entries for `SWITCH/CASE` (replace repeated `ELSE_IF` chains matching one value)
+- `agents/canopy/ops/validate.md` — `SWITCH`, `CASE`, `DEFAULT` added to error check for framework primitives defined in skill/project ops
+- `agents/canopy.md` — primitives list updated
+- `skills/canopy-debug/ops.md` — `SWITCH`, `CASE`, `DEFAULT` added to never-simulated primitives list
+- `rules/skill-resources.md`, `setup.sh`, `setup.ps1`, `CLAUDE.md` — primitives lists updated
+
+---
+
 ## [0.10.0] — 2026-04-20
 
 ### Added

@@ -180,6 +180,9 @@ Always resolved from `shared/framework/ops.md`. Never define these in skill or p
 | `IF` | `<< condition` | Branch — execute children if true |
 | `ELSE_IF` | `<< condition` | Continue IF chain |
 | `ELSE` | — | Close IF chain |
+| `SWITCH` | `<< expression` | Match expression against CASE values |
+| `CASE` | `<< value` | Branch within SWITCH; execute if expression equals value |
+| `DEFAULT` | — | Close SWITCH block; execute if no CASE matched |
 | `BREAK` | — | Exit current op; return to caller's next node |
 | `END` | `[message]` | Halt skill execution immediately |
 | `ASK` | `<< question \| opt1 \| opt2` | Prompt user; halt until response |

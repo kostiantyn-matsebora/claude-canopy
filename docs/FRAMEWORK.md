@@ -220,6 +220,26 @@ Continues an `IF` or `ELSE_IF` chain. Only evaluated if all prior conditions wer
 ### `ELSE`
 Closes an `IF` or `ELSE_IF` chain. Executed only if all prior conditions were false.
 
+### `SWITCH << expression`
+```
+SWITCH << expression
+├── CASE << value1
+│   └── branch1
+[├── CASE << value2
+│   └── branch2]
+[└── DEFAULT
+    └── default-branch]
+```
+Evaluates `expression` once; executes the first `CASE` whose value matches; skips the rest.
+`DEFAULT` executes only if no `CASE` matched.
+Use when branching on a single expression against multiple discrete values.
+
+### `CASE << value`
+A branch within a `SWITCH` block. Executed when the `SWITCH` expression equals `value`.
+
+### `DEFAULT`
+Closes a `SWITCH` block. Executed only if no `CASE` matched.
+
 ### `ASK << question | option1 | option2 [| ...]`
 Present a question with options. Execution halts until the user responds.
 
@@ -239,7 +259,7 @@ When a tree node contains an `ALL_CAPS` identifier:
 2. **`shared/project/ops.md`** — project-wide ops
 3. **`shared/framework/ops.md`** — framework primitives (fallback)
 
-Primitives (`IF`, `ELSE_IF`, `ELSE`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`, `BREAK`, `END`) always
+Primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`, `BREAK`, `END`) always
 resolve to `shared/framework/ops.md` and are never overridden.
 
 ---
@@ -295,6 +315,9 @@ Control-flow and interaction ops available in every skill, in every project.
 | `IF` | `<< condition` | Branch on condition |
 | `ELSE_IF` | `<< condition` | Continue IF chain |
 | `ELSE` | — | Close IF chain |
+| `SWITCH` | `<< expression` | Match expression against CASE values |
+| `CASE` | `<< value` | Branch within SWITCH; execute if expression equals value |
+| `DEFAULT` | — | Close SWITCH block; execute if no CASE matched |
 | `BREAK` | — | Exit current op, resume caller |
 | `END` | `[message]` | Halt skill execution |
 | `ASK` | `<question> << option1 \| ...` | Prompt user; halt until response |

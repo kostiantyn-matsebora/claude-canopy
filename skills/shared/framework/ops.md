@@ -59,6 +59,43 @@ Branch may be an op call or natural language.
 
 ---
 
+## SWITCH \<\< expression
+
+```
+SWITCH << expression
+├── CASE << value1
+│   └── branch1
+[├── CASE << value2
+│   └── branch2]
+[└── DEFAULT
+    └── default-branch]
+```
+
+Evaluate `expression` once against step context.
+Match its value against each `CASE` in order; execute the first matching branch and skip the rest.
+`DEFAULT` executes only if no `CASE` matched.
+Branches may be op calls or natural language.
+Use when branching on a single expression against multiple discrete values.
+
+---
+
+## CASE \<\< value
+
+A branch within a `SWITCH` block.
+Evaluated only if no prior `CASE` in the same `SWITCH` has matched.
+Executed when the `SWITCH` expression equals `value`.
+Branch may be an op call or natural language.
+
+---
+
+## DEFAULT
+
+Closes a `SWITCH` block.
+Executed only if no `CASE` in the block matched.
+Branch may be an op call or natural language.
+
+---
+
 ## BREAK
 
 Exit the current op immediately and return to the caller's next node.
