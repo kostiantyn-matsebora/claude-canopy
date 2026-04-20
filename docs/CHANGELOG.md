@@ -7,6 +7,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.10.0] — 2026-04-20
+
+### Added
+
+- `skills/canopy/skill.md` — new bundled `canopy` skill; detects active platform and delegates to `.claude/agents/canopy.md` or `.github/agents/canopy.md`; enables `/canopy <request>` as the primary invocation shorthand on Claude Code
+- `agents/canopy/policies/platform-targeting.md` — platform targeting policy for write ops (CREATE, SCAFFOLD, CONVERT_TO_CANOPY): maps execution platform and explicit user target to the correct skills base path; enforces no hardcoded `.claude/` or `.github/` paths in generated skill content
+
+### Changed
+
+- `agents/canopy.md` — `dispatch-schema.json` explore output extended with `available_platforms` (all detected platform dirs) and `explicit_target_platform` (from user input or null); added rule: always load platform runtime spec before executing any op procedure
+- `agents/canopy/schemas/dispatch-schema.json` — added `available_platforms` (array) and `explicit_target_platform` (string or null) fields to the dispatch output contract
+- `agents/canopy/ops/create.md`, `scaffold.md`, `convert-to-canopy.md` — platform-aware skill path resolution via `policies/platform-targeting.md`
+- `agents/canopy/ops/validate.md` — added cross-platform content check: flags hardcoded `.claude/` or `.github/` paths in skill files
+- `agents/canopy/policies/skill-structure-rules.md` — added cross-platform content rule: `skill.md` must not contain hardcoded platform paths
+- `agents/canopy/policies/subagent-rules.md` — documented platform-specific subagent execution: native Explore subagent on Claude Code; inline sequential file-reading fallback on Copilot
+- `agents/canopy/verify/create-expected.md`, `scaffold-expected.md` — verify target-platform path rather than hardcoded `.claude/` path
+- `runtimes/claude.md` — invocation updated to `/canopy <request>` via the bundled `canopy` skill
+- `docs/README.md` — invocation section rewritten: `/canopy <request>` as primary form for Claude Code; `Follow .github/agents/canopy.md and <request>` for Copilot; operations table updated with concrete `/canopy` examples
+- `CLAUDE.md` — Contributing Rules: added documentation verification requirement — every framework change must be verified against `runtimes/`, `AUTHORING.md` for staleness before the work is considered done
+
+---
+
 ## [0.9.0] — 2026-04-19
 
 ### Added
