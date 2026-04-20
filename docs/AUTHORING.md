@@ -4,6 +4,8 @@ This document covers writing Canopy skills by hand. For the recommended approach
 the `canopy` agent generate, scaffold, or convert skills for you — see the
 [Usage section](README.md#usage) in the README.
 
+For a quick one-page reference covering primitives, op syntax, category directories, and canopy agent operations, see [CHEATSHEET.md](CHEATSHEET.md).
+
 ---
 
 ## Skill Anatomy
