@@ -56,7 +56,7 @@ $ARGUMENTS
 - Preserve the skill's existing tree syntax style (markdown list vs box-drawing) unless the user asks to switch
 - Do not change a skill's logic or intent during CONVERT_TO_CANOPY, MODIFY, or VALIDATE
 - skill.md must contain only orchestration — no inline JSON, YAML, tables, scripts, or templates
-- Framework primitives (IF, ELSE_IF, ELSE, SWITCH, CASE, DEFAULT, BREAK, END, ASK, SHOW_PLAN, VERIFY_EXPECTED) are never defined in skill or project ops
+- Framework primitives (IF, ELSE_IF, ELSE, SWITCH, CASE, DEFAULT, FOR_EACH, BREAK, END, ASK, SHOW_PLAN, VERIFY_EXPECTED) are never defined in skill or project ops
 - Before creating any op or resource file, always read `shared/project/ops.md`, `shared/framework/ops.md`, and any existing `shared/project/<category>/` files — reference shared content, never duplicate it
 - After any change to a skill or agent file, verify every `Read \`<category>/<file>\`` reference and every op procedure path still resolves to an existing file
 - Always load the platform runtime spec before executing any op procedure

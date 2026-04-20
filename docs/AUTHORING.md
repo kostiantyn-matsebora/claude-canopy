@@ -183,7 +183,8 @@ Always resolved from `shared/framework/ops.md`. Never define these in skill or p
 | `SWITCH` | `<< expression` | Match expression against CASE values |
 | `CASE` | `<< value` | Branch within SWITCH; execute if expression equals value |
 | `DEFAULT` | — | Close SWITCH block; execute if no CASE matched |
-| `BREAK` | — | Exit current op; return to caller's next node |
+| `FOR_EACH` | `<< item in collection` | Iterate body over every element in collection |
+| `BREAK` | — | Exit current loop or op; return to caller's next node |
 | `END` | `[message]` | Halt skill execution immediately |
 | `ASK` | `<< question \| opt1 \| opt2` | Prompt user; halt until response |
 | `SHOW_PLAN` | `>> field1 \| field2` | Present pre-execution plan |

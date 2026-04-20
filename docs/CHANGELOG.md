@@ -7,6 +7,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.12.0] — 2026-04-20
+
+### Added
+
+- `skills/shared/framework/ops.md` — new `FOR_EACH << item in collection` primitive for iterating over collections; body executes once per element; empty collection skips body entirely; `BREAK` inside exits the loop early; `BREAK` outside a loop exits the current op (dual role clarified)
+
+### Changed
+
+- `docs/FRAMEWORK.md` — added `FOR_EACH` to node types table, Control Flow Primitives section, and Op Registries table; primitives sentence updated
+- `docs/AUTHORING.md` — added `FOR_EACH` and updated `BREAK` in Framework Primitives table
+- `agents/canopy/constants/control-flow-notation.md` — added migration entries for `FOR_EACH` (replace prose loops and numbered-step-per-item patterns)
+- `agents/canopy/ops/validate.md` — `FOR_EACH` added to error check for framework primitives defined in skill/project ops
+- `agents/canopy.md` — primitives list updated
+- `skills/canopy-debug/ops.md` — `FOR_EACH` added to never-simulated primitives list
+- `rules/skill-resources.md`, `setup.sh`, `setup.ps1`, `CLAUDE.md` — primitives lists updated
+
+---
+
 ## [0.11.0] — 2026-04-20
 
 ### Added
