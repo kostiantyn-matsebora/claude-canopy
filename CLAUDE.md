@@ -114,7 +114,7 @@ Both files must be kept in sync. `.canopy-version` is the machine-readable sourc
 
 ## skill.md Constraints
 
-`skill.md` must contain **only** orchestration — no tables, JSON/YAML blocks, scripts, inline examples, or templates. Structured content belongs in category subdirectories. See `agents/canopy/policies/skill-structure-rules.md` and `agents/canopy/policies/writing-rules.md` for the full rule set.
+`skill.md` must contain **only** orchestration — no tables, JSON/YAML blocks, scripts, inline examples, or templates. Structured content belongs in category subdirectories. See `agents/canopy/policies/authoring-rules.md` for the full rule set.
 
 ## Platform Compatibility
 
