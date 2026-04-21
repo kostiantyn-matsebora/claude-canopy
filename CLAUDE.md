@@ -68,7 +68,7 @@ Reference pattern in skill.md: `Read \`<category>/<file>\` for <brief descriptio
 - `agents/canopy.md` — bundled agent (Canopy skill format): detects platform, loads runtime, dispatches deterministically to one of 10 ops via `IF/ELSE_IF` tree
 - `agents/canopy/ops/` — per-operation procedure files (one per operation)
 - `agents/canopy/constants/` — lookup tables: category dirs, control flow notation, operation detection, dispatch map
-- `agents/canopy/policies/` — decomposed rule files (skill-structure, writing, op-naming, subagent, debug, preservation, category decision)
+- `agents/canopy/policies/` — rule files: `authoring-rules.md` (skill structure, writing style, op naming, subagent contract, debug meta-skill), `category-decision-flowchart.md`, `platform-targeting.md`, `preservation-rules.md`, `conversion-expansion-rules.md`
 - `agents/canopy/schemas/explore-schema.json` — output contract for skill-analysis explore subagents (used by ops)
 - `agents/canopy/schemas/dispatch-schema.json` — output contract for the canopy agent's own intent-classification subagent
 - `agents/canopy/verify/` — expected-state checklists for `VERIFY_EXPECTED` per operation
