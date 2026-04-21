@@ -64,9 +64,55 @@ Conditional branches, multi-step procedures, and decision trees specific to one 
 
 If a skill launches a subagent:
 - Schema must exist as `schemas/explore-schema.json`.
-- `## Agent` section needs only the task description — "do not inline-read" and "return JSON only matching schema" are implicit from the ambient `skill-resources.md`.
+- "Do not inline-read" and "return JSON only matching schema" are implicit from the ambient `skill-resources.md` — do not restate.
 - No freeform prose output — every field the skill uses must be declared in the schema.
 - First tree node must be `EXPLORE >> context` when `## Agent` declares `**explore**`.
+
+### `## Agent` body shape
+
+Three canonical shapes — pick the one matching subagent complexity:
+
+**(A) Minimal** — one concern, one task summary line:
+
+```markdown
+**explore** — reads the files for <service>. Output contract: `schemas/explore-schema.json`.
+```
+
+**(B) Sub-task bullets** — ≥2 parallel concerns (no ordering between them), each with its own lookup file:
+
+```markdown
+**explore** — resolve operation dispatch context. Output contract: `schemas/dispatch-schema.json`.
+
+Sub-tasks:
+- Classify intent from `$ARGUMENTS` — see `constants/operation-detection.md`
+- Detect execution platform — see `constants/platform-detection.md`
+- Resolve explicit target platform — see `constants/target-platform-triggers.md`
+```
+
+One concern per bullet. One `constants/<file>.md` reference per bullet. Prose *within* a bullet is allowed but must stay short and scannable.
+
+**(C) Op reference** — procedure has ordering, branching, or data flow between steps; or is reusable across skills:
+
+```markdown
+**explore** — execute `FETCH_DISPATCH_CONTEXT`. Output contract: `schemas/dispatch-schema.json`.
+```
+
+The op lives in `<skill>/ops.md` (or `agents/<name>/ops/` for agents) as a normal tree-form op. Runtime resolves the name and injects the op body as the subagent's task.
+
+### `## Agent` body MUST NOT contain
+
+- Inline mappings, tables, or enumerations (e.g. `.claude/ → claude`, lists of version-bearing filenames) — extract to `constants/`
+- Inline quoted examples (e.g. `"create for copilot"`) — extract to `constants/`
+- Schema-field lists (e.g. `Return: field1, field2, ...`) — schema is authoritative; omit
+
+### Multi-concern rule (MUST)
+
+When the subagent performs ≥2 distinct concerns, the body MUST use shape (B) or (C). Concerns joined by commas, semicolons, ` — `, or sentences in a single paragraph are not allowed — this mirrors the existing tree-node rule that multi-clause steps must be split into sub-bullets. Single-concern subagents use shape (A).
+
+Shape selection:
+- 1 concern → (A)
+- ≥2 parallel concerns with no ordering/data dependencies → (B)
+- Procedure has ordering, branching, or data flow → (C)
 
 Platform-specific execution (native subagent on Claude Code, inline fallback on Copilot) is defined by the runtime spec — see `runtimes/claude.md` and `runtimes/copilot.md`.
 

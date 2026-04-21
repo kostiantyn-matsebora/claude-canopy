@@ -22,6 +22,15 @@ Generate a blank skill skeleton with all directories and placeholder files.
 
    ---
 
+   <!-- Optional: include ## Agent when the skill needs an explore subagent.
+        Pick one of the three canonical shapes (A/B/C) — see
+        `policies/authoring-rules.md` → "## Agent body shape".
+
+   ## Agent
+
+   **explore** — <one-line task summary>. Output contract: `schemas/explore-schema.json`.
+   -->
+
    ## Tree
 
    * <skill-name>
@@ -47,6 +56,15 @@ Generate a blank skill skeleton with all directories and placeholder files.
    <Preamble: parse $ARGUMENTS and set context variables here.>
 
    ---
+
+   <!-- Optional: include ## Agent when the skill needs an explore subagent.
+        Pick one of the three canonical shapes (A/B/C) — see
+        `policies/authoring-rules.md` → "## Agent body shape".
+
+   ## Agent
+
+   **explore** — <one-line task summary>. Output contract: `schemas/explore-schema.json`.
+   -->
 
    ## Tree
 

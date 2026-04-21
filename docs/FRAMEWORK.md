@@ -116,7 +116,7 @@ SHOW_PLAN >> files | Vault changes | API calls
 
 ## Skill Anatomy
 
-See [README.md](README.md) for the full skill anatomy reference.
+See [README.md](README.md) for the full skill anatomy reference. For the `## Agent` section's three canonical shapes (minimal / sub-task bullets / op reference) and content rules, see [AUTHORING.md — `## Agent`](AUTHORING.md#-agent).
 
 ---
 

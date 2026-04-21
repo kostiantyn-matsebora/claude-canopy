@@ -18,6 +18,8 @@
 - `## Rules` or `## Response:` section missing
 - `skill.md` tree nodes or `Read` references contain hardcoded platform paths (`.claude/` or `.github/`) — skills must be platform-agnostic; all category file references must be relative to the skill directory
 - Tree node contains a complex inline command invocation (multi-flag or multi-argument shell command) → must extract to a `commands/` script
+- `## Agent` body contains an inline mapping, table, or enumeration (e.g. `.claude/ → claude`, `X → Y` pairs, list of filenames) → extract to `constants/`
+- `## Agent` body contains inline quoted examples (e.g. `"create for copilot"`) → extract to `constants/`
 
 ## Warnings
 
@@ -28,6 +30,8 @@
 - `Read <category>/<file>` references all front-loaded at tree top instead of point-of-use
 - `## Steps` section used instead of `## Tree`
 - `ops.md` has branching prose that should use tree notation internally
+- `## Agent` body lists schema fields (`Return: X, Y, Z`) — schema is authoritative; omit the list (or add a policy note if emphasis on specific fields is needed)
+- `## Agent` body is a single paragraph with ≥2 concerns joined by commas, semicolons, ` — `, or sentences → split into sub-task bullets (shape B) or extract to a named op (shape C)
 
 ## Optimizations
 
