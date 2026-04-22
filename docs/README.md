@@ -44,6 +44,10 @@ Canopy
     └── no syntax to memorize before you ship your first skill
 ```
 
+* **VS Code extension:** [claude-canopy-vscode](https://github.com/kostiantyn-matsebora/claude-canopy-vscode) — syntax highlighting, op completions, diagnostics.
+
+* **Examples:** [claude-canopy-examples](https://github.com/kostiantyn-matsebora/claude-canopy-examples) — a working project to learn from.
+
 ## How it works
 
 > The tree is the source of truth. The platform is just a detail.
@@ -95,9 +99,7 @@ pyproject.toml, and other version-bearing files; lists all files needing updates
 > 
 > Seven nodes, reusable op definitions, real-state evaluation, and guardrails to prevent mistakes - this is **Canopy** in action.
 
-## Examples and Resources
-
-**Examples:** [claude-canopy-examples](https://github.com/kostiantyn-matsebora/claude-canopy-examples) — a working project to learn from.
+## Resources
 
 **Cheatsheet:** [CHEATSHEET.md](CHEATSHEET.md) — one-page reference: skill anatomy, all primitives with examples, op syntax, category directories, canopy agent operations, and debug mode.
 
