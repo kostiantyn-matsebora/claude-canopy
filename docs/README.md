@@ -35,6 +35,10 @@ Canopy
 │   ├── write once; runs on Claude Code and GitHub Copilot unchanged
 │   └── the interpreter adapts at runtime — same skill.md, zero changes
 │
+├── EDITOR-NATIVE
+│   ├── VS Code extension: completions, hover docs, go-to-definition, live diagnostics
+│   └── broken op references and signature errors surface before the skill runs
+│
 └── ZERO LEARNING CURVE
     ├── /canopy scaffolds, validates, improves, and converts for you
     └── no syntax to memorize before you ship your first skill
