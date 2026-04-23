@@ -11,13 +11,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed (BREAKING)
 
-- **Distribution shape**: Canopy is now a set of [agentskills.io](https://agentskills.io)-format Agent Skills, not a git subtree + setup-script bundle. Each skill lives at `skills/<name>/SKILL.md` with frontmatter conforming to the open Agent Skills spec. Ships as **three** skills: `canopy`, `canopy-debug`, `canopy-help`.
+- **Distribution shape**: Canopy is now a set of [agentskills.io](https://agentskills.io)-format Agent Skills, not a git subtree + setup-script bundle. Each skill lives at `skills/<name>/SKILL.md` with frontmatter conforming to the open Agent Skills spec. Ships as **two** skills: `canopy` and `canopy-debug`. The previous `canopy-help` skill was dropped as redundant — the HELP op inside `canopy` (`/canopy help`) provides the same operations reference.
 - **Install**: `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0` replaces the previous installer, submodule, and subtree flows. Requires GitHub CLI v2.90.0+.
 - **The agent is now a skill**: the canopy agent (formerly `agents/canopy.md` + `agents/canopy/<resource-dirs>/`) was consolidated into `skills/canopy/SKILL.md` plus its existing resource subdirectories. All ops, policies, constants, schemas, templates, and verify checklists move with it. Since agentskills.io-format skills already auto-register `/<skill-name>` slash commands, no wrapper skill is needed — `/canopy` is provided by the skill itself.
 - **Framework primitives** (`IF`, `SWITCH`, `FOR_EACH`, `ASK`, `SHOW_PLAN`, etc.): moved from `skills/shared/framework/ops.md` into `skills/canopy/references/framework-ops.md`. Bundled with the `canopy` skill; no longer a separate skill.
 - **Runtime specs**: `runtimes/claude.md` and `runtimes/copilot.md` moved to `skills/canopy/references/`. The `--agent` install flag now drives platform routing (`.claude/skills/` vs `.github/skills/`).
 - **Skill resource conventions**: `rules/skill-resources.md` moved to `skills/canopy/references/skill-resources.md`. No longer auto-applied as an ambient rule (the agentskills.io distribution has no glob mechanism); it's now reference documentation loaded by the `canopy` skill's ops on demand.
-- **`canopy-debug` and `canopy-help`**: file rename to uppercase `SKILL.md`; frontmatter updated to agentskills.io spec; `canopy-help` path references retargeted to the new `canopy` skill location.
+- **`canopy-debug`**: file rename to uppercase `SKILL.md`; frontmatter updated to agentskills.io spec.
 - **User skill files**: the spec uses `SKILL.md` (uppercase). All `canopy` resource files now reference `SKILL.md` instead of `skill.md`.
 - **Cross-skill ops**: `skills/shared/project/ops.md` is no longer a built-in concept. Consumers who want shared cross-skill ops author their own skill (e.g. a `project-ops` skill) and reference it explicitly. `REFACTOR_SKILLS` now asks the user where to extract.
 
@@ -41,7 +41,6 @@ git rm -r .claude/canopy
 # Install the new skills (Claude Code consumer)
 gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent claude-code --scope project --pin v0.17.0
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-help  --agent claude-code --scope project --pin v0.17.0
 
 # For Copilot consumers, swap --agent claude-code for --agent github-copilot
 # (skills land in .github/skills/ instead of .claude/skills/)

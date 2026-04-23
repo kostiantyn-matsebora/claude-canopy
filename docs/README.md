@@ -109,24 +109,22 @@ pyproject.toml, and other version-bearing files; lists all files needing updates
 
 ## Quick Start
 
-Canopy ships as three [Agent Skills](https://agentskills.io). The same skills work on **Claude Code** and **GitHub Copilot** — only the install path differs.
+Canopy ships as two [Agent Skills](https://agentskills.io). The same skills work on **Claude Code** and **GitHub Copilot** — only the install path differs.
 
-**The three skills:**
+**The two skills:**
 
-- **`canopy`** — the agent skill (ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs). Provides `/canopy` for authoring/validating/improving/scaffolding/refactoring Canopy skills.
+- **`canopy`** — the agent skill (ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs). Provides `/canopy` for authoring/validating/improving/scaffolding/refactoring Canopy skills. Run `/canopy help` for the operations reference.
 - **`canopy-debug`** — trace any Canopy skill with phase banners and per-node tracing (`/canopy-debug <skill>`)
-- **`canopy-help`** — read-only operations reference (`/canopy-help [op]`)
 
 ### Install for Claude Code
 
-Skills land under `.claude/skills/<name>/` and become available via `/canopy`, `/canopy-debug`, `/canopy-help`.
+Skills land under `.claude/skills/<name>/` and become available via `/canopy` and `/canopy-debug`.
 
 **With `gh skill` (GitHub CLI v2.90.0+, recommended):**
 
 ```bash
 gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent claude-code --scope project --pin v0.17.0
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-help  --agent claude-code --scope project --pin v0.17.0
 ```
 
 **Manual install (no extra CLI required):**
@@ -138,21 +136,19 @@ git clone --depth 1 --branch v0.17.0 \
 mkdir -p .claude/skills
 cp -r /tmp/claude-canopy/skills/canopy       .claude/skills/
 cp -r /tmp/claude-canopy/skills/canopy-debug .claude/skills/
-cp -r /tmp/claude-canopy/skills/canopy-help  .claude/skills/
 ```
 
 For user-scope install (available across all your projects), use `~/.claude/skills/` instead of `.claude/skills/`.
 
 ### Install for GitHub Copilot
 
-Skills land under `.github/skills/<name>/` and become available via `/canopy`, `/canopy-debug`, `/canopy-help` in Copilot Chat. Copilot does not read `.claude/`, so the install target is different — but the skills themselves are identical.
+Skills land under `.github/skills/<name>/` and become available via `/canopy` and `/canopy-debug` in Copilot Chat. Copilot does not read `.claude/`, so the install target is different — but the skills themselves are identical.
 
 **With `gh skill` (GitHub CLI v2.90.0+, recommended):**
 
 ```bash
 gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent github-copilot --scope project --pin v0.17.0
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-help  --agent github-copilot --scope project --pin v0.17.0
 ```
 
 **Manual install (no extra CLI required):**
@@ -164,7 +160,6 @@ git clone --depth 1 --branch v0.17.0 \
 mkdir -p .github/skills
 cp -r /tmp/claude-canopy/skills/canopy       .github/skills/
 cp -r /tmp/claude-canopy/skills/canopy-debug .github/skills/
-cp -r /tmp/claude-canopy/skills/canopy-help  .github/skills/
 ```
 
 ### Updating
@@ -222,17 +217,9 @@ For **Create** and **Scaffold**, the agent asks your preferred tree syntax - **m
 
 Every operation shows a plan and asks for confirmation before making changes.
 
-### Using the `canopy-help` Skill
+### Getting Help
 
-`canopy-help` is a lightweight read-only skill that emits the canopy agent reference without invoking the agent itself. Use it when you just want to browse the operations list or look up a specific procedure.
-
-```
-/canopy-help
-/canopy-help improve
-/canopy-help refactor-skills
-```
-
-With no argument it prints the full operations reference. With an operation name it prints that operation's procedure verbatim.
+Run `/canopy help` (or just ask "help") to see the full operations reference — what each op does, example invocations, skill anatomy, and the op lookup order.
 
 ### Writing a Skill Manually
 

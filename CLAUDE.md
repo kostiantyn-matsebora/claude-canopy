@@ -14,13 +14,12 @@ Canopy is a declarative framework for writing skills as **syntax trees of named 
 
 ## Repo Layout (v0.17.0+)
 
-This repo ships three installable Agent Skills under `skills/`:
+This repo ships two installable Agent Skills under `skills/`:
 
 | Skill | Purpose |
 |-------|---------|
-| `canopy/` | The agent skill — ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs. Invokes as `/canopy`. |
+| `canopy/` | The agent skill — ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs. Invokes as `/canopy`. The HELP op (`/canopy help`) covers what `canopy-help` used to. |
 | `canopy-debug/` | Trace any Canopy skill with phase banners and per-node tracing |
-| `canopy-help/` | Read-only operations reference |
 
 Plus:
 

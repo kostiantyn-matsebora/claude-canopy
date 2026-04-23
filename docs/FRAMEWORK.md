@@ -10,10 +10,8 @@ Canopy ships as four [agentskills.io](https://agentskills.io)-format Agent Skill
 
 | Skill | Purpose |
 |-------|---------|
-| `canopy` | Heavy agent skill — creates, modifies, scaffolds, validates, improves, refactors, advises on, and converts Canopy skills. Carries all ops, policies, constants, schemas, templates, verify checklists, framework primitives, and runtime specs |
-| `canopy` | Lightweight slash-command wrapper — provides `/canopy`, delegates to `canopy` |
+| `canopy` | The agent skill — creates, modifies, scaffolds, validates, improves, refactors, advises on, and converts Canopy skills. Carries all ops, policies, constants, schemas, templates, verify checklists, framework primitives, and runtime specs. Provides `/canopy` (and `/canopy help` for the operations reference). |
 | `canopy-debug` | Trace any Canopy skill with phase banners and per-node tracing |
-| `canopy-help` | Read-only operations reference |
 
 When modifying `FRAMEWORK.md`, `skills/canopy/references/skill-resources.md`, or `skills/canopy/references/framework-ops.md`, also update the relevant policy files in `skills/canopy/policies/` to stay in sync.
 
@@ -62,7 +60,7 @@ Platform-agnostic constructs (`ASK`, `IF/ELSE_IF`, `SWITCH/CASE`, `SHOW_PLAN`, `
 ```
 claude-canopy/
 ├── skills/
-│   ├── canopy/                    # Heavy agent skill
+│   ├── canopy/                          # The agent skill
 │   │   ├── SKILL.md                     # Frontmatter + agent body
 │   │   ├── ops/                         # Per-operation procedure files (10)
 │   │   ├── policies/                    # Authoring rules, decision flowchart, etc. (5)
@@ -75,14 +73,10 @@ claude-canopy/
 │   │       ├── runtime-claude.md        # Claude Code runtime spec
 │   │       ├── runtime-copilot.md       # GitHub Copilot runtime spec
 │   │       └── skill-resources.md       # Category behavior, op lookup chain (reference doc)
-│   ├── canopy/                          # Slash-command wrapper
-│   │   └── SKILL.md                     # Delegates to canopy
-│   ├── canopy-debug/                    # Trace meta-skill
-│   │   ├── SKILL.md
-│   │   ├── ops.md
-│   │   └── policies/debug-output.md
-│   └── canopy-help/                     # Read-only operations reference
-│       └── SKILL.md
+│   └── canopy-debug/                    # Trace meta-skill
+│       ├── SKILL.md
+│       ├── ops.md
+│       └── policies/debug-output.md
 ├── docs/                                 # FRAMEWORK.md, AUTHORING.md, CHEATSHEET.md, etc.
 ├── assets/                               # Logo / icon files
 ├── .canopy-version                       # Single-line version (machine-readable)
@@ -96,16 +90,12 @@ claude-canopy/
 ```
 <consumer>/
 ├── .claude/skills/                       # if installed with --agent claude-code
-│   ├── canopy/                     # full skill directory copied here
-│   ├── canopy/
+│   ├── canopy/                           # full skill directory copied here
 │   ├── canopy-debug/
-│   ├── canopy-help/
 │   └── <your-skill>/                     # consumer-authored skills
 └── .github/skills/                       # if installed with --agent github-copilot
     ├── canopy/
-    ├── canopy/
-    ├── canopy-debug/
-    └── canopy-help/
+    └── canopy-debug/
 ```
 
 A consumer-authored skill follows the same agentskills.io layout:
