@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract CHANGELOG notes for this version
+        id: notes
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          CHANGELOG="docs/CHANGELOG.md"
+
+          if [ ! -f "$CHANGELOG" ]; then
+            echo "::error::$CHANGELOG not found"
+            exit 1
+          fi
+
+          # Extract the block between "## [VERSION] — ..." and the next "## [..."
+          awk -v ver="$VERSION" '
+            BEGIN { in_block = 0 }
+            /^## \[/ {
+              if (in_block) exit
+              if ($0 ~ "^## \\[" ver "\\]") {
+                in_block = 1
+                next
+              }
+            }
+            in_block { print }
+          ' "$CHANGELOG" > release-notes.md
+
+          if [ ! -s release-notes.md ]; then
+            echo "::warning::No CHANGELOG section found for $VERSION; release notes will be empty"
+          fi
+
+          echo "notes_file=release-notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "${{ steps.notes.outputs.notes_file }}"

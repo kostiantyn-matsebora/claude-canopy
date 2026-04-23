@@ -117,13 +117,21 @@ After any change to skill or op behavior, check that `references/runtime-claude.
 
 Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`).
 
-## Versioning
+## Versioning & release
 
-When bumping the framework version, update **both**:
-1. `.canopy-version` — single line containing the new version string (e.g. `0.17.0`)
-2. `docs/CHANGELOG.md` — prepend a new `## [X.Y.Z] — YYYY-MM-DD` entry
+The version string lives in **four places** that must stay in sync:
+1. `.canopy-version`
+2. `.claude-plugin/plugin.json` → `version`
+3. `.claude-plugin/marketplace.json` → `metadata.version` AND `plugins[0].version`
+4. The git tag `vX.Y.Z`
 
-Both files must be kept in sync. Releases are made by tagging the new version (`git tag vX.Y.Z && git push origin vX.Y.Z`), which becomes the install artifact for `gh skill install --pin vX.Y.Z`.
+Use the `/bump-version X.Y.Z` skill (at `.claude/skills/bump-version/`) to update all four + draft a `docs/CHANGELOG.md` entry + create the local tag in one step. The skill never pushes; pushing is deliberate and manual:
+
+```bash
+git push origin master vX.Y.Z
+```
+
+Pushing a `v*` tag fires `.github/workflows/release.yml`, which extracts the matching `## [X.Y.Z] — …` block from `docs/CHANGELOG.md` and creates a GitHub Release with those notes. The git tag is also the install artifact for `gh skill install --pin vX.Y.Z` and for `/plugin install canopy@claude-canopy` (which picks up `plugin.json`'s `version`).
 
 ## SKILL.md Constraints
 
