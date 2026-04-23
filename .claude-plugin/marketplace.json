@@ -1,0 +1,25 @@
+{
+  "name": "claude-canopy",
+  "owner": {
+    "name": "Kostiantyn Matsebora"
+  },
+  "metadata": {
+    "description": "Canopy — skills as executable code. Installable as a Claude Code plugin.",
+    "version": "0.17.0"
+  },
+  "plugins": [
+    {
+      "name": "canopy",
+      "source": "./",
+      "description": "Canopy framework — authors, validates, improves, scaffolds, and refactors skills using a structured control-flow notation. Bundles the canopy agent skill and canopy-debug trace meta-skill.",
+      "version": "0.17.0",
+      "author": {
+        "name": "Kostiantyn Matsebora"
+      },
+      "homepage": "https://github.com/kostiantyn-matsebora/claude-canopy",
+      "repository": "https://github.com/kostiantyn-matsebora/claude-canopy",
+      "license": "MIT",
+      "keywords": ["canopy", "skills", "agent-skills", "agentskills.io", "control-flow", "skill-authoring"]
+    }
+  ]
+}

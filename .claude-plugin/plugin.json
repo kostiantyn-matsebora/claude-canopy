@@ -1,0 +1,12 @@
+{
+  "name": "canopy",
+  "description": "Canopy framework — authors, validates, improves, scaffolds, and refactors skills using a structured control-flow notation (IF, SWITCH, FOR_EACH, ASK, SHOW_PLAN, VERIFY_EXPECTED). Bundles the canopy agent skill and canopy-debug trace meta-skill.",
+  "version": "0.17.0",
+  "author": {
+    "name": "Kostiantyn Matsebora"
+  },
+  "homepage": "https://github.com/kostiantyn-matsebora/claude-canopy",
+  "repository": "https://github.com/kostiantyn-matsebora/claude-canopy",
+  "license": "MIT",
+  "keywords": ["canopy", "skills", "agent-skills", "agentskills.io", "control-flow", "skill-authoring"]
+}

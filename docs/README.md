@@ -118,16 +118,31 @@ Canopy ships as two [Agent Skills](https://agentskills.io). The same skills work
 
 ### Install for Claude Code
 
-Skills land under `.claude/skills/<name>/` and become available via `/canopy` and `/canopy-debug`.
+Three install paths; pick whichever fits your workflow. All three land the same skill files; only the discovery and namespace differ.
 
-**With `gh skill` (GitHub CLI v2.90.0+, recommended):**
+**Option 1 — Claude Code plugin marketplace (recommended, no external CLI):**
+
+Inside a Claude Code session:
+
+```
+/plugin marketplace add kostiantyn-matsebora/claude-canopy
+/plugin install canopy@claude-canopy
+```
+
+Skills land under your plugin cache and become available as `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced; the `canopy:` prefix prevents conflicts with other plugins). Update later with `/plugin marketplace update` followed by re-install.
+
+**Option 2 — `gh skill` (GitHub CLI v2.90.0+):**
+
+Skills land under `.claude/skills/<name>/` and become available as `/canopy` and `/canopy-debug` (no namespace).
 
 ```bash
 gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent claude-code --scope project --pin v0.17.0
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent claude-code --scope project --pin v0.17.0
 ```
 
-**Manual install (no extra CLI required):**
+**Option 3 — Manual install (no extra CLI required):**
+
+Same placement and slash commands as Option 2.
 
 ```bash
 git clone --depth 1 --branch v0.17.0 \
@@ -164,8 +179,9 @@ cp -r /tmp/claude-canopy/skills/canopy-debug .github/skills/
 
 ### Updating
 
-With `gh skill`: `gh skill update kostiantyn-matsebora/claude-canopy <skill> --pin vX.Y.Z` (per-skill).
-Manual: re-run the `git clone` + `cp -r` steps with a newer `--branch vX.Y.Z`.
+- Plugin: `/plugin marketplace update claude-canopy` then `/plugin install canopy@claude-canopy` (overwrites with the latest).
+- `gh skill`: `gh skill update kostiantyn-matsebora/claude-canopy <skill> --pin vX.Y.Z` (per-skill).
+- Manual: re-run the `git clone` + `cp -r` steps with a newer `--branch vX.Y.Z`.
 
 Inspect a skill before installing: `gh skill preview kostiantyn-matsebora/claude-canopy <skill>`.
 

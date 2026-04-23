@@ -23,10 +23,19 @@ This repo ships two installable Agent Skills under `skills/`:
 
 Plus:
 
+- `.claude-plugin/plugin.json` — Claude Code plugin manifest (makes the whole repo installable as a plugin via `/plugin install canopy@claude-canopy`)
+- `.claude-plugin/marketplace.json` — marketplace catalog (makes the repo a marketplace that users can add via `/plugin marketplace add kostiantyn-matsebora/claude-canopy`)
 - `docs/` — `FRAMEWORK.md`, `AUTHORING.md`, `CHEATSHEET.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `README.md`
 - `assets/` — logo / icon files referenced by docs
 - `.canopy-version` — single-line version string (machine-readable)
 - `LICENSE`
+
+The repo is intentionally shaped so the SAME `skills/canopy/` and `skills/canopy-debug/` directories serve all three install paths:
+1. **Claude Code plugin** — `.claude-plugin/plugin.json` at repo root + `skills/<name>/SKILL.md` matches the Claude Code plugin layout. Skills become `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced).
+2. **`gh skill install`** — reads `skills/*/SKILL.md` from the repo directly. Lands skills at `.claude/skills/<name>/`; slash commands are `/canopy` and `/canopy-debug` (no namespace).
+3. **Manual `git clone` + `cp -r`** — same as `gh skill install`.
+
+Keep this single-source-of-truth property when adding skills: put them under `skills/<name>/` only. Don't create parallel copies.
 
 ## Op Lookup Order
 
@@ -88,13 +97,13 @@ Reference pattern in SKILL.md: `Read \`<category>/<file>\` for <brief descriptio
 
 ## Install / Distribute
 
-Canopy installs via [`gh skill`](https://cli.github.com/manual/gh_skill_install) (GitHub CLI v2.90.0+):
+Three install paths supported:
 
-```bash
-gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0
-```
+1. **Claude Code plugin marketplace** — inside Claude Code: `/plugin marketplace add kostiantyn-matsebora/claude-canopy` then `/plugin install canopy@claude-canopy`. No external CLI required.
+2. **`gh skill`** ([GitHub CLI v2.90.0+](https://cli.github.com/manual/gh_skill_install)) — `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0`. `--agent` chooses `.claude/skills/<skill>/` or `.github/skills/<skill>/`.
+3. **Manual** — `git clone --branch vX.Y.Z` + `cp -r skills/<name> .claude/skills/` (or `.github/skills/`).
 
-`--agent` chooses the install path (`.claude/skills/<skill>/` for Claude Code, `.github/skills/<skill>/` for Copilot). No more `setup.sh`, no more git subtree, no more symlink wiring.
+No more `setup.sh`, no more git subtree, no more symlink wiring.
 
 ## Contributing Rules
 
