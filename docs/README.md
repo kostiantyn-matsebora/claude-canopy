@@ -140,20 +140,37 @@ gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent claude-
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent claude-code --scope project --pin v0.17.0
 ```
 
-**Option 3 — Manual install (no extra CLI required):**
+**Option 3 — Install script (no external CLI required):**
 
-Same placement and slash commands as Option 2.
+Same placement and slash commands as Option 2. The script is idempotent — re-run to update. Canopy is platform-agnostic, so the same script handles Claude Code, Copilot, or both in one pass via `--target`.
 
 ```bash
-git clone --depth 1 --branch v0.17.0 \
-  https://github.com/kostiantyn-matsebora/claude-canopy /tmp/claude-canopy
-
-mkdir -p .claude/skills
-cp -r /tmp/claude-canopy/skills/canopy       .claude/skills/
-cp -r /tmp/claude-canopy/skills/canopy-debug .claude/skills/
+# macOS / Linux — defaults to --target claude
+curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/master/install.sh | bash
 ```
 
-For user-scope install (available across all your projects), use `~/.claude/skills/` instead of `.claude/skills/`.
+```powershell
+# Windows (PowerShell) — defaults to -Target claude
+irm https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/master/install.ps1 | iex
+```
+
+Flags:
+
+| Purpose | bash | PowerShell |
+|---|---|---|
+| Pin version | `--version 0.18.0` | `-Version 0.18.0` |
+| Claude Code only | `--target claude` (default) | `-Target claude` (default) |
+| GitHub Copilot only | `--target copilot` | `-Target copilot` |
+| **Both platforms in one run** | `--target both` | `-Target both` |
+
+Version resolution order:
+1. Explicit flag (`--version` / `-Version`)
+2. `.canopy-version` file in the current directory — commit this to your repo to pin a version across collaborators
+3. Latest release tag from GitHub
+
+The script writes `.canopy-version` after a successful install, so the next run reinstalls the same version unless you bump it.
+
+For user-scope install (available across all your projects), run the script from `~` instead of your project root.
 
 ### Install for GitHub Copilot
 
@@ -166,22 +183,28 @@ gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent github-
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent github-copilot --scope project --pin v0.17.0
 ```
 
-**Manual install (no extra CLI required):**
+**Install script (no external CLI required):**
+
+Same `install.sh` / `install.ps1` as the Claude Code section — just pass `--target copilot` (or `-Target copilot` on PowerShell). Use `--target both` to install for Claude Code and Copilot in one pass.
 
 ```bash
-git clone --depth 1 --branch v0.17.0 \
-  https://github.com/kostiantyn-matsebora/claude-canopy /tmp/claude-canopy
-
-mkdir -p .github/skills
-cp -r /tmp/claude-canopy/skills/canopy       .github/skills/
-cp -r /tmp/claude-canopy/skills/canopy-debug .github/skills/
+# macOS / Linux
+curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/master/install.sh | bash -s -- --target copilot
 ```
+
+```powershell
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/master/install.ps1 -OutFile install.ps1
+pwsh ./install.ps1 -Target copilot
+```
+
+Flags + version resolution are identical to the Claude Code option above.
 
 ### Updating
 
 - Plugin: `/plugin marketplace update claude-canopy` then `/plugin install canopy@claude-canopy` (overwrites with the latest).
 - `gh skill`: `gh skill update kostiantyn-matsebora/claude-canopy <skill> --pin vX.Y.Z` (per-skill).
-- Manual: re-run the `git clone` + `cp -r` steps with a newer `--branch vX.Y.Z`.
+- Install script: bump `.canopy-version` (or pass `--version`/`-Version`) and re-run the same one-liner.
 
 Inspect a skill before installing: `gh skill preview kostiantyn-matsebora/claude-canopy <skill>`.
 

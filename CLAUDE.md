@@ -101,9 +101,9 @@ Three install paths supported:
 
 1. **Claude Code plugin marketplace** — inside Claude Code: `/plugin marketplace add kostiantyn-matsebora/claude-canopy` then `/plugin install canopy@claude-canopy`. No external CLI required.
 2. **`gh skill`** ([GitHub CLI v2.90.0+](https://cli.github.com/manual/gh_skill_install)) — `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0`. `--agent` chooses `.claude/skills/<skill>/` or `.github/skills/<skill>/`.
-3. **Manual** — `git clone --branch vX.Y.Z` + `cp -r skills/<name> .claude/skills/` (or `.github/skills/`).
+3. **Install script** — `install.sh` / `install.ps1` at the repo root. Consumers fetch via `curl | bash` or `irm | iex`. Script is idempotent (safe to re-run to update), resolves version from `--version` flag → `.canopy-version` file → latest release, writes `.canopy-version` after install.
 
-No more `setup.sh`, no more git subtree, no more symlink wiring.
+No more git subtree, no more symlink wiring.
 
 ## Contributing Rules
 
