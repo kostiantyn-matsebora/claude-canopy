@@ -34,7 +34,7 @@ Use `/canopy scaffold <skill-name>` to generate a blank skill, or see [AUTHORING
 
 ## Framework primitives
 
-Resolved from `skills/shared/framework/ops.md`. Never redefine in skill or project ops.
+Resolved from `skills/canopy-agent/references/framework-ops.md` (bundled with the `canopy-agent` skill). Never redefine in skill or project ops.
 
 | Primitive | Signature | Notes |
 |-----------|-----------|-------|
@@ -68,8 +68,8 @@ ELSE                     │   └── DELETE_THING        └── write f
 ## Op lookup order
 
 1. `<skill>/ops.md` — skill-local
-2. `skills/shared/project/ops.md` — project-wide
-3. `skills/shared/framework/ops.md` — framework primitives
+2. Consumer-defined cross-skill ops (optional; package as your own skill, no built-in location)
+3. `skills/canopy-agent/references/framework-ops.md` — framework primitives
 
 ---
 
@@ -99,7 +99,7 @@ Op names must be `ALL_CAPS`. Ops may call other ops.
 
 `schemas/` · `templates/` · `commands/` · `constants/` · `checklists/` · `policies/` · `verify/`
 
-Structured content lives in these subdirectories alongside `skill.md`, never inline in the tree.
+Structured content lives in these subdirectories alongside `SKILL.md`, never inline in the tree.
 Reference at point of use — never front-load: `Read \`policies/deploy-rules.md\` for deployment constraints.`
 Full directory reference: [AUTHORING.md — Category Resource Directories](AUTHORING.md#category-resource-directories)
 
@@ -112,7 +112,7 @@ Invoke with `/canopy <request>` or natural language. Every operation shows a pla
 | Operation | Say… | Effect |
 |-----------|------|--------|
 | `CREATE` | "create a skill that…" | New skill from scratch |
-| `SCAFFOLD` | "scaffold a blank skill called…" | Empty `skill.md` + `ops.md` stubs |
+| `SCAFFOLD` | "scaffold a blank skill called…" | Empty `SKILL.md` + `ops.md` stubs |
 | `MODIFY` | "add X to the Y skill" | Edit existing skill |
 | `VALIDATE` | "validate the X skill" | Report errors / warnings / optimizations |
 | `IMPROVE` | "improve the X skill" | Apply optimizations and style fixes |
@@ -126,7 +126,7 @@ Invoke with `/canopy <request>` or natural language. Every operation shows a pla
 
 ---
 
-## skill.md must NOT contain
+## SKILL.md must NOT contain
 
 Tables · JSON/YAML blocks · scripts · inline templates or examples → extract to category subdirectories.
 

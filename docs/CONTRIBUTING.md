@@ -9,14 +9,14 @@ This repo is the framework itself. Good contributions include:
 - framework docs and clarifications
 - improvements to bundled skills
 - framework primitives or resource-loading behavior
-- setup and submodule integration fixes
+- agentskills.io spec compliance fixes
 
 If a change affects framework behavior, keep these files in sync:
 
 - `docs/FRAMEWORK.md`
-- `rules/skill-resources.md`
-- `skills/shared/framework/ops.md`
-- `agents/canopy/policies/authoring-rules.md`
+- `skills/canopy-agent/references/skill-resources.md`
+- `skills/canopy-agent/references/framework-ops.md`
+- `skills/canopy-agent/policies/authoring-rules.md`
 
 ## Getting Started
 
@@ -38,10 +38,10 @@ If a change affects framework behavior, keep these files in sync:
 
 Before opening a pull request, check:
 
-- the README still matches the actual setup flow
+- the README still matches the actual install flow (`gh skill install ...`)
 - framework docs do not duplicate each other unnecessarily
 - bundled skills still reflect current framework rules
-- setup scripts still produce the documented files
+- `skills-ref validate ./skills/<skill>` passes for any modified skill
 
 ## Commit Messages
 

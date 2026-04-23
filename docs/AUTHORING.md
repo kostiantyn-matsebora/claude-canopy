@@ -10,7 +10,7 @@ For a quick one-page reference covering primitives, op syntax, and category dire
 
 ## Skill Anatomy
 
-Every skill is a `skill.md` file with these sections in order:
+Every skill is a `SKILL.md` file with these sections in order:
 
 ```markdown
 ---
@@ -141,7 +141,7 @@ Fetch the chart's upstream default values from the internet.
 
 ## Category Resource Directories
 
-Structured content belongs in subdirectories alongside `skill.md`, not inline in the tree. For the full directory table and behaviors, see [FRAMEWORK.md — Category Resource Subdirectories](FRAMEWORK.md#category-resource-subdirectories).
+Structured content belongs in subdirectories alongside `SKILL.md`, not inline in the tree. For the full directory table and behaviors, see [FRAMEWORK.md — Category Resource Subdirectories](FRAMEWORK.md#category-resource-subdirectories).
 
 Reference these files at the point of use in the tree, not all at the top:
 
@@ -153,9 +153,9 @@ One concern per file. Do not bundle unrelated content into a single resource fil
 
 ---
 
-## What skill.md Must NOT Contain
+## What SKILL.md Must NOT Contain
 
-`skill.md` is orchestration only. Never put these inline — extract to category subdirs:
+`SKILL.md` is orchestration only. Never put these inline — extract to category subdirs:
 
 - Tables
 - JSON or YAML blocks

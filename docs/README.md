@@ -109,97 +109,32 @@ pyproject.toml, and other version-bearing files; lists all files needing updates
 
 ## Quick Start
 
-### Option A - Installer (simplest)
-
-One command installs the latest release and wires Claude Code (default) or GitHub Copilot. Re-run with a version tag to update.
+Canopy ships as a set of [Agent Skills](https://agentskills.io) installable via [`gh skill`](https://cli.github.com/manual/gh_skill_install) (GitHub CLI v2.90.0+). Install one command per skill, per target agent:
 
 ```bash
-# Linux / macOS — Claude Code (default)
-curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.sh | bash
+# Claude Code (project scope, pinned to a release)
+gh skill install kostiantyn-matsebora/claude-canopy canopy-agent --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy        --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug  --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-help   --agent claude-code --scope project --pin v0.17.0
 
-# Linux / macOS — GitHub Copilot
-curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.sh | bash -s -- --target copilot
-
-# Install a specific version
-curl -sSL https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.sh | bash -s -- v1.0.0
-
-# Windows — Claude Code
-irm https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.ps1 | iex
-
-# Windows — GitHub Copilot
-# (download first, then run with -Target)
-irm https://raw.githubusercontent.com/kostiantyn-matsebora/claude-canopy/main/install.ps1 -OutFile install.ps1
-pwsh ./install.ps1 -Target copilot
+# GitHub Copilot (same skills, --agent github-copilot drops them under .github/skills/)
+gh skill install kostiantyn-matsebora/claude-canopy canopy-agent --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy        --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug  --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-help   --agent github-copilot --scope project --pin v0.17.0
 ```
 
-Choosing `copilot` installs Canopy under `.github/canopy/` and appends a `## Canopy Skill Resources` section to `.github/copilot-instructions.md` instead of creating `.claude/rules/skill-resources.md`.
+The four skills:
 
-The installer writes a `.canopy-version` file at the project root. Commit it so collaborators know which version to reinstall on a fresh clone. Update Canopy by re-running the installer with the new version tag.
+- **`canopy-agent`** — the heavy agent skill (ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs)
+- **`canopy`** — lightweight slash-command wrapper that delegates to `canopy-agent` (provides `/canopy`)
+- **`canopy-debug`** — trace any Canopy skill with phase banners and per-node tracing (`/canopy-debug <skill>`)
+- **`canopy-help`** — read-only operations reference (`/canopy-help [op]`)
 
-> **Do not use `git clone` here.** That creates a nested `.git` repo — your project's git will not track any files inside `.claude/`, including your own skills.
+Drop `--scope project` for `--scope user` to install once for all your projects.
 
-### Option B - Git Submodule (recommended)
-
-Keeps Canopy as a versioned dependency. Your skills live in your repo; Canopy lives in the submodule. Update Canopy anytime with `git submodule update --remote`.
-
-```bash
-# 1. Add the submodule
-git submodule add https://github.com/kostiantyn-matsebora/claude-canopy .claude/canopy
-
-# 2. Run the setup script to wire Claude Code to both canopy internals and your skills
-bash .claude/canopy/setup.sh        # Linux / macOS
-pwsh .claude/canopy/setup.ps1       # Windows
-
-# 3. Remove the Canopy repo's CLAUDE.md — it lives inside the submodule and is not
-#    auto-loaded by Claude Code, but deleting it keeps .claude/canopy/ uncluttered
-rm .claude/canopy/CLAUDE.md
-```
-
-The setup script creates files and links in your project (outside the submodule):
-
-```text
-.claude/
-├── canopy/                          <- git submodule (never edit here)
-├── agents/
-│   ├── canopy.md                    <- symlinked from canopy; bundled agent
-│   └── canopy/                      <- symlinked from canopy; agent resources
-├── rules/
-│   └── skill-resources.md           <- created by setup; globs cover both dirs
-└── skills/
-    ├── shared/
-    │   ├── project/ops.md           <- created by setup; add your project-wide ops here
-    │   └── ops.md                   <- created by setup; redirect stub
-    └── <your-skill>/                <- your skills, tracked in your project repo
-```
-
-The script is idempotent - safe to re-run, never overwrites existing files.
-
-### Option C - Git Subtree (recommended for teams)
-
-Files live directly in your repo history — no extra clone steps, no submodule complexity. On Unix/macOS, commit the generated symlinks once; collaborators get a working setup on `git clone` with no extra steps.
-
-```bash
-# 1. Add Canopy as a subtree
-git subtree add --prefix=.claude/canopy \
-  https://github.com/kostiantyn-matsebora/claude-canopy main --squash
-
-# 2. Wire Claude Code (creates relative symlinks + config stubs)
-bash .claude/canopy/setup.sh        # Linux / macOS
-pwsh .claude/canopy/setup.ps1       # Windows
-
-# 3. On Unix/macOS: commit the symlinks — collaborators get them on git clone
-git add .claude/skills .claude/agents .claude/rules
-git commit -m "chore: add Canopy via subtree and wire symlinks"
-```
-
-Update Canopy later — no need to re-run setup:
-
-```bash
-git subtree pull --prefix=.claude/canopy \
-  https://github.com/kostiantyn-matsebora/claude-canopy main --squash
-```
-
-> Compared to submodule: subtree squashes Canopy commits into your repo history (no `.gitmodules`, no `--recurse-submodules` on clone). Compared to installer: files are versioned in git, so `git log .claude/canopy/` shows what changed.
+Update later with `gh skill update`. Inspect a skill before installing with `gh skill preview`.
 
 ---
 
@@ -219,9 +154,17 @@ The `canopy` agent handles the full skill lifecycle.
 
 **GitHub Copilot:**
 
+Same `/canopy` slash command via the wrapper skill installed at `.github/skills/canopy/`:
+
 ```
-Follow .github/agents/canopy.md and improve bump-version
-Follow .github/agents/canopy.md and create a skill that bumps semantic versions
+/canopy improve bump-version
+/canopy create a skill that bumps semantic versions
+```
+
+Explicit form (always works):
+
+```
+Follow .github/skills/canopy-agent/SKILL.md and improve bump-version
 ```
 
 | Operation | Example |
@@ -255,7 +198,7 @@ With no argument it prints the full operations reference. With an operation name
 
 ### Writing a Skill Manually
 
-See [AUTHORING.md](AUTHORING.md) for the full manual reference - skill anatomy, tree syntax, op definitions, category resource conventions, and what `skill.md` must not contain.
+See [AUTHORING.md](AUTHORING.md) for the full manual reference - skill anatomy, tree syntax, op definitions, category resource conventions, and what `SKILL.md` must not contain.
 
 ---
 
@@ -277,9 +220,9 @@ For detailed directory layout and structure (standalone vs. submodule), see [FRA
 │                            │                                               │
 │                            ▼                                               │
 │  Stage 2: Detect platform + load runtime                                   │
-│  ┌─ canopy agent (## Tree, first steps) ─────────────────────────────┐    │
+│  ┌─ canopy-agent skill (## Tree, first steps) ───────────────────────┐    │
 │  │  detect platform: .claude/ -> Claude Code | .github/ -> Copilot   │    │
-│  │  load runtimes/claude.md  or  runtimes/copilot.md                 │    │
+│  │  load references/runtime-claude.md or references/runtime-copilot  │    │
 │  └────────────────────────────────────────────────────────────────────┘    │
 │                            │                                               │
 │                            ▼                                               │
@@ -324,17 +267,17 @@ For detailed directory layout and structure (standalone vs. submodule), see [FRA
 │  └────────────────────────────────────────────────────────────────────┘    │
 └────────────────────────────────────────────────────────────────────────────┘
 
-Op lookup (ALL_CAPS node -> definition):          Category resources (loaded per step):
-1. my-skill/ops.md          (skill-local)         schemas/   -> subagent contracts
-2. shared/project/ops.md    (project-wide)        policies/  -> active rules / guardrails
-3. shared/framework/ops.md  (primitives)          templates/ -> fill <token> -> write file
-   IF, ELSE, ASK, SHOW_PLAN, VERIFY...            commands/  -> run named shell section
-                                                   constants/ -> load named values
-                                                   verify/    -> post-run checklist
+Op lookup (ALL_CAPS node -> definition):                         Category resources (loaded per step):
+1. my-skill/ops.md                          (skill-local)        schemas/   -> subagent contracts
+2. consumer-defined cross-skill ops         (optional)           policies/  -> active rules / guardrails
+3. canopy-agent/references/framework-ops.md (primitives)         templates/ -> fill <token> -> write file
+   IF, ELSE, SWITCH, FOR_EACH, ASK, SHOW_PLAN, VERIFY...         commands/  -> run named shell section
+                                                                  constants/ -> load named values
+                                                                  verify/    -> post-run checklist
 
 Runtime specs (loaded at Stage 2):
-  runtimes/claude.md   -> .claude/ paths, native subagents, rules globs
-  runtimes/copilot.md  -> .github/ paths, inline subagent fallback, copilot-instructions.md
+  canopy-agent/references/runtime-claude.md   -> .claude/ paths, native subagents
+  canopy-agent/references/runtime-copilot.md  -> .github/ paths, inline subagent fallback
 ```
 
 ---
@@ -344,8 +287,8 @@ Runtime specs (loaded at Stage 2):
 Canopy is currently a personal project. Issues and PRs welcome once the API stabilizes.
 
 - Keep `docs/FRAMEWORK.md` as the single source of truth
-- `canopy` agent must be updated whenever framework rules change
-- Framework primitives in `skills/shared/framework/ops.md` are immutable contracts
+- `canopy-agent` skill must be updated whenever framework rules change
+- Framework primitives in `skills/canopy-agent/references/framework-ops.md` are immutable contracts
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR expectations.
 

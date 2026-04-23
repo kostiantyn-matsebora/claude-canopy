@@ -26,10 +26,10 @@ Operation → file mapping (case-insensitive, `_` and `-` interchangeable):
 ## Tree
 
 * canopy-help
-  * IF << .claude/agents/canopy.md exists
-    * Set `agent_base` = `.claude/agents/canopy/ops`
+  * IF << .claude/skills/canopy-agent/SKILL.md exists
+    * Set `agent_base` = `.claude/skills/canopy-agent/ops`
   * ELSE
-    * Set `agent_base` = `.github/agents/canopy/ops`
+    * Set `agent_base` = `.github/skills/canopy-agent/ops`
   * IF << op_file is empty
     * Read `<agent_base>/help.md` and emit its content verbatim
   * ELSE_IF << op_file is a recognised operation file
