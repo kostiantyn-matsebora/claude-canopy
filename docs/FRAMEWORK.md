@@ -10,22 +10,22 @@ Canopy ships as four [agentskills.io](https://agentskills.io)-format Agent Skill
 
 | Skill | Purpose |
 |-------|---------|
-| `canopy-agent` | Heavy agent skill — creates, modifies, scaffolds, validates, improves, refactors, advises on, and converts Canopy skills. Carries all ops, policies, constants, schemas, templates, verify checklists, framework primitives, and runtime specs |
-| `canopy` | Lightweight slash-command wrapper — provides `/canopy`, delegates to `canopy-agent` |
+| `canopy` | Heavy agent skill — creates, modifies, scaffolds, validates, improves, refactors, advises on, and converts Canopy skills. Carries all ops, policies, constants, schemas, templates, verify checklists, framework primitives, and runtime specs |
+| `canopy` | Lightweight slash-command wrapper — provides `/canopy`, delegates to `canopy` |
 | `canopy-debug` | Trace any Canopy skill with phase banners and per-node tracing |
 | `canopy-help` | Read-only operations reference |
 
-When modifying `FRAMEWORK.md`, `skills/canopy-agent/references/skill-resources.md`, or `skills/canopy-agent/references/framework-ops.md`, also update the relevant policy files in `skills/canopy-agent/policies/` to stay in sync.
+When modifying `FRAMEWORK.md`, `skills/canopy/references/skill-resources.md`, or `skills/canopy/references/framework-ops.md`, also update the relevant policy files in `skills/canopy/policies/` to stay in sync.
 
 ### Skill Format
 
-`canopy-agent`'s `SKILL.md` is itself written in **Canopy skill format** (frontmatter + `## Agent` + `## Tree` + `## Rules` + `## Response:`). Its `## Tree` provides deterministic op dispatch via an explicit `SWITCH/CASE` block — no LLM-inferred routing.
+`canopy`'s `SKILL.md` is itself written in **Canopy skill format** (frontmatter + `## Agent` + `## Tree` + `## Rules` + `## Response:`). Its `## Tree` provides deterministic op dispatch via an explicit `SWITCH/CASE` block — no LLM-inferred routing.
 
 Skills live at `.claude/skills/<name>/SKILL.md` (or `.github/skills/<name>/SKILL.md` on Copilot). Skill resource files follow these category conventions:
 
 | Directory | Content |
 |-----------|---------|
-| `<skill>/ops/` | Per-operation procedure files (used by skills with multi-file op libraries like `canopy-agent`) |
+| `<skill>/ops/` | Per-operation procedure files (used by skills with multi-file op libraries like `canopy`) |
 | `<skill>/policies/` | Policy files read by the skill at runtime |
 | `<skill>/schemas/` | JSON schemas used as output contracts |
 | `<skill>/templates/` | Skeleton files substituted and written |
@@ -41,15 +41,15 @@ Skills live at `.claude/skills/<name>/SKILL.md` (or `.github/skills/<name>/SKILL
 
 Canopy uses an **interpreter** model for cross-platform support. `SKILL.md` is always the single source of truth — no generated artifacts.
 
-At execution time the canopy-agent skill:
+At execution time the canopy skill:
 1. Detects the active platform (Claude Code or GitHub Copilot)
 2. Loads the matching runtime spec from `references/`
 3. Executes the skill tree using platform-appropriate primitives
 
 | File | Platform |
 |------|----------|
-| `skills/canopy-agent/references/runtime-claude.md` | Claude Code — native subagents, `.claude/` paths |
-| `skills/canopy-agent/references/runtime-copilot.md` | GitHub Copilot — inline subagent fallback, `.github/` paths |
+| `skills/canopy/references/runtime-claude.md` | Claude Code — native subagents, `.claude/` paths |
+| `skills/canopy/references/runtime-copilot.md` | GitHub Copilot — inline subagent fallback, `.github/` paths |
 
 Platform-agnostic constructs (`ASK`, `IF/ELSE_IF`, `SWITCH/CASE`, `SHOW_PLAN`, `VERIFY_EXPECTED`) behave identically on both platforms. The runtime spec only defines what differs.
 
@@ -62,7 +62,7 @@ Platform-agnostic constructs (`ASK`, `IF/ELSE_IF`, `SWITCH/CASE`, `SHOW_PLAN`, `
 ```
 claude-canopy/
 ├── skills/
-│   ├── canopy-agent/                    # Heavy agent skill
+│   ├── canopy/                    # Heavy agent skill
 │   │   ├── SKILL.md                     # Frontmatter + agent body
 │   │   ├── ops/                         # Per-operation procedure files (10)
 │   │   ├── policies/                    # Authoring rules, decision flowchart, etc. (5)
@@ -76,7 +76,7 @@ claude-canopy/
 │   │       ├── runtime-copilot.md       # GitHub Copilot runtime spec
 │   │       └── skill-resources.md       # Category behavior, op lookup chain (reference doc)
 │   ├── canopy/                          # Slash-command wrapper
-│   │   └── SKILL.md                     # Delegates to canopy-agent
+│   │   └── SKILL.md                     # Delegates to canopy
 │   ├── canopy-debug/                    # Trace meta-skill
 │   │   ├── SKILL.md
 │   │   ├── ops.md
@@ -96,13 +96,13 @@ claude-canopy/
 ```
 <consumer>/
 ├── .claude/skills/                       # if installed with --agent claude-code
-│   ├── canopy-agent/                     # full skill directory copied here
+│   ├── canopy/                     # full skill directory copied here
 │   ├── canopy/
 │   ├── canopy-debug/
 │   ├── canopy-help/
 │   └── <your-skill>/                     # consumer-authored skills
 └── .github/skills/                       # if installed with --agent github-copilot
-    ├── canopy-agent/
+    ├── canopy/
     ├── canopy/
     ├── canopy-debug/
     └── canopy-help/
@@ -232,7 +232,7 @@ Both are parsed identically. Use whichever reads more naturally for the skill.
 
 ## Control Flow Primitives
 
-Defined in `skills/canopy-agent/references/framework-ops.md` (bundled with the `canopy-agent` skill). Always looked up there — never overridden in skill-local or project ops.
+Defined in `skills/canopy/references/framework-ops.md` (bundled with the `canopy` skill). Always looked up there — never overridden in skill-local or project ops.
 
 ### `IF << condition`
 ```
@@ -298,10 +298,10 @@ When a tree node contains an `ALL_CAPS` identifier:
 
 1. **`<skill>/ops.md`** — skill-local ops (checked first)
 2. **Consumer-defined cross-skill ops** — optional; consumers package these as their own skill (no built-in location)
-3. **`canopy-agent/references/framework-ops.md`** — framework primitives (fallback, bundled with the `canopy-agent` skill)
+3. **`canopy/references/framework-ops.md`** — framework primitives (fallback, bundled with the `canopy` skill)
 
 Primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `FOR_EACH`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`, `BREAK`, `END`) always
-resolve to `canopy-agent/references/framework-ops.md` and are never overridden.
+resolve to `canopy/references/framework-ops.md` and are never overridden.
 
 ---
 
@@ -347,9 +347,9 @@ Op definitions calling other ops (including shared ops) is valid — the system 
 
 ## Op Registries
 
-### Framework primitives (`skills/canopy-agent/references/framework-ops.md`)
+### Framework primitives (`skills/canopy/references/framework-ops.md`)
 
-Control-flow and interaction ops available in every skill, in every project. Bundled with the `canopy-agent` skill.
+Control-flow and interaction ops available in every skill, in every project. Bundled with the `canopy` skill.
 
 | Op | Signature | Purpose |
 |----|-----------|---------|
@@ -393,9 +393,9 @@ Load at point of use in the tree — never front-load all reads at the top.
 
 ## Skill Resource Conventions
 
-`skills/canopy-agent/references/skill-resources.md` documents the category behavior table, op lookup order, tree execution model, and explore subagent contract. It is no longer an ambient rule (the agentskills.io distribution has no glob mechanism); it is loaded on demand by `canopy-agent` ops when needed.
+`skills/canopy/references/skill-resources.md` documents the category behavior table, op lookup order, tree execution model, and explore subagent contract. It is no longer an ambient rule (the agentskills.io distribution has no glob mechanism); it is loaded on demand by `canopy` ops when needed.
 
-Consumers do not need to wire anything — once `canopy-agent` is installed, its ops resolve resource references through the bundled reference docs.
+Consumers do not need to wire anything — once `canopy` is installed, its ops resolve resource references through the bundled reference docs.
 
 ---
 

@@ -34,7 +34,7 @@ Use `/canopy scaffold <skill-name>` to generate a blank skill, or see [AUTHORING
 
 ## Framework primitives
 
-Resolved from `skills/canopy-agent/references/framework-ops.md` (bundled with the `canopy-agent` skill). Never redefine in skill or project ops.
+Resolved from `skills/canopy/references/framework-ops.md` (bundled with the `canopy` skill). Never redefine in skill or project ops.
 
 | Primitive | Signature | Notes |
 |-----------|-----------|-------|
@@ -69,7 +69,7 @@ ELSE                     │   └── DELETE_THING        └── write f
 
 1. `<skill>/ops.md` — skill-local
 2. Consumer-defined cross-skill ops (optional; package as your own skill, no built-in location)
-3. `skills/canopy-agent/references/framework-ops.md` — framework primitives
+3. `skills/canopy/references/framework-ops.md` — framework primitives
 
 ---
 

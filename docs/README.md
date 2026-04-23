@@ -109,32 +109,70 @@ pyproject.toml, and other version-bearing files; lists all files needing updates
 
 ## Quick Start
 
-Canopy ships as a set of [Agent Skills](https://agentskills.io) installable via [`gh skill`](https://cli.github.com/manual/gh_skill_install) (GitHub CLI v2.90.0+). Install one command per skill, per target agent:
+Canopy ships as three [Agent Skills](https://agentskills.io). The same skills work on **Claude Code** and **GitHub Copilot** — only the install path differs.
 
-```bash
-# Claude Code (project scope, pinned to a release)
-gh skill install kostiantyn-matsebora/claude-canopy canopy-agent --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy        --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-debug  --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-help   --agent claude-code --scope project --pin v0.17.0
+**The three skills:**
 
-# GitHub Copilot (same skills, --agent github-copilot drops them under .github/skills/)
-gh skill install kostiantyn-matsebora/claude-canopy canopy-agent --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy        --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-debug  --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-help   --agent github-copilot --scope project --pin v0.17.0
-```
-
-The four skills:
-
-- **`canopy-agent`** — the heavy agent skill (ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs)
-- **`canopy`** — lightweight slash-command wrapper that delegates to `canopy-agent` (provides `/canopy`)
+- **`canopy`** — the agent skill (ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs). Provides `/canopy` for authoring/validating/improving/scaffolding/refactoring Canopy skills.
 - **`canopy-debug`** — trace any Canopy skill with phase banners and per-node tracing (`/canopy-debug <skill>`)
 - **`canopy-help`** — read-only operations reference (`/canopy-help [op]`)
 
-Drop `--scope project` for `--scope user` to install once for all your projects.
+### Install for Claude Code
 
-Update later with `gh skill update`. Inspect a skill before installing with `gh skill preview`.
+Skills land under `.claude/skills/<name>/` and become available via `/canopy`, `/canopy-debug`, `/canopy-help`.
+
+**With `gh skill` (GitHub CLI v2.90.0+, recommended):**
+
+```bash
+gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-help  --agent claude-code --scope project --pin v0.17.0
+```
+
+**Manual install (no extra CLI required):**
+
+```bash
+git clone --depth 1 --branch v0.17.0 \
+  https://github.com/kostiantyn-matsebora/claude-canopy /tmp/claude-canopy
+
+mkdir -p .claude/skills
+cp -r /tmp/claude-canopy/skills/canopy       .claude/skills/
+cp -r /tmp/claude-canopy/skills/canopy-debug .claude/skills/
+cp -r /tmp/claude-canopy/skills/canopy-help  .claude/skills/
+```
+
+For user-scope install (available across all your projects), use `~/.claude/skills/` instead of `.claude/skills/`.
+
+### Install for GitHub Copilot
+
+Skills land under `.github/skills/<name>/` and become available via `/canopy`, `/canopy-debug`, `/canopy-help` in Copilot Chat. Copilot does not read `.claude/`, so the install target is different — but the skills themselves are identical.
+
+**With `gh skill` (GitHub CLI v2.90.0+, recommended):**
+
+```bash
+gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-help  --agent github-copilot --scope project --pin v0.17.0
+```
+
+**Manual install (no extra CLI required):**
+
+```bash
+git clone --depth 1 --branch v0.17.0 \
+  https://github.com/kostiantyn-matsebora/claude-canopy /tmp/claude-canopy
+
+mkdir -p .github/skills
+cp -r /tmp/claude-canopy/skills/canopy       .github/skills/
+cp -r /tmp/claude-canopy/skills/canopy-debug .github/skills/
+cp -r /tmp/claude-canopy/skills/canopy-help  .github/skills/
+```
+
+### Updating
+
+With `gh skill`: `gh skill update kostiantyn-matsebora/claude-canopy <skill> --pin vX.Y.Z` (per-skill).
+Manual: re-run the `git clone` + `cp -r` steps with a newer `--branch vX.Y.Z`.
+
+Inspect a skill before installing: `gh skill preview kostiantyn-matsebora/claude-canopy <skill>`.
 
 ---
 
@@ -164,7 +202,7 @@ Same `/canopy` slash command via the wrapper skill installed at `.github/skills/
 Explicit form (always works):
 
 ```
-Follow .github/skills/canopy-agent/SKILL.md and improve bump-version
+Follow .github/skills/canopy/SKILL.md and improve bump-version
 ```
 
 | Operation | Example |
@@ -220,7 +258,7 @@ For detailed directory layout and structure (standalone vs. submodule), see [FRA
 │                            │                                               │
 │                            ▼                                               │
 │  Stage 2: Detect platform + load runtime                                   │
-│  ┌─ canopy-agent skill (## Tree, first steps) ───────────────────────┐    │
+│  ┌─ canopy skill (## Tree, first steps) ───────────────────────┐    │
 │  │  detect platform: .claude/ -> Claude Code | .github/ -> Copilot   │    │
 │  │  load references/runtime-claude.md or references/runtime-copilot  │    │
 │  └────────────────────────────────────────────────────────────────────┘    │
@@ -270,14 +308,14 @@ For detailed directory layout and structure (standalone vs. submodule), see [FRA
 Op lookup (ALL_CAPS node -> definition):                         Category resources (loaded per step):
 1. my-skill/ops.md                          (skill-local)        schemas/   -> subagent contracts
 2. consumer-defined cross-skill ops         (optional)           policies/  -> active rules / guardrails
-3. canopy-agent/references/framework-ops.md (primitives)         templates/ -> fill <token> -> write file
+3. canopy/references/framework-ops.md (primitives)         templates/ -> fill <token> -> write file
    IF, ELSE, SWITCH, FOR_EACH, ASK, SHOW_PLAN, VERIFY...         commands/  -> run named shell section
                                                                   constants/ -> load named values
                                                                   verify/    -> post-run checklist
 
 Runtime specs (loaded at Stage 2):
-  canopy-agent/references/runtime-claude.md   -> .claude/ paths, native subagents
-  canopy-agent/references/runtime-copilot.md  -> .github/ paths, inline subagent fallback
+  canopy/references/runtime-claude.md   -> .claude/ paths, native subagents
+  canopy/references/runtime-copilot.md  -> .github/ paths, inline subagent fallback
 ```
 
 ---
@@ -287,8 +325,8 @@ Runtime specs (loaded at Stage 2):
 Canopy is currently a personal project. Issues and PRs welcome once the API stabilizes.
 
 - Keep `docs/FRAMEWORK.md` as the single source of truth
-- `canopy-agent` skill must be updated whenever framework rules change
-- Framework primitives in `skills/canopy-agent/references/framework-ops.md` are immutable contracts
+- `canopy` skill must be updated whenever framework rules change
+- Framework primitives in `skills/canopy/references/framework-ops.md` are immutable contracts
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR expectations.
 

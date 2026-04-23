@@ -14,12 +14,11 @@ Canopy is a declarative framework for writing skills as **syntax trees of named 
 
 ## Repo Layout (v0.17.0+)
 
-This repo ships four installable Agent Skills under `skills/`:
+This repo ships three installable Agent Skills under `skills/`:
 
 | Skill | Purpose |
 |-------|---------|
-| `canopy-agent/` | The heavy agent skill — ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs |
-| `canopy/` | Lightweight slash-command wrapper — provides `/canopy`, delegates to `canopy-agent` |
+| `canopy/` | The agent skill — ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs. Invokes as `/canopy`. |
 | `canopy-debug/` | Trace any Canopy skill with phase banners and per-node tracing |
 | `canopy-help/` | Read-only operations reference |
 
@@ -35,7 +34,7 @@ Plus:
 When a tree node has an `ALL_CAPS` identifier, look up in this order:
 1. `<skill>/ops.md` — skill-local
 2. Consumer-defined cross-skill ops (optional; consumers package these as their own skill — no built-in location)
-3. `skills/canopy-agent/references/framework-ops.md` — framework primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `FOR_EACH`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`)
+3. `skills/canopy/references/framework-ops.md` — framework primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `FOR_EACH`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`)
 
 Primitives are never overridden.
 
@@ -74,19 +73,19 @@ Reference pattern in SKILL.md: `Read \`<category>/<file>\` for <brief descriptio
 
 - `docs/FRAMEWORK.md` — canonical framework specification (single source of truth)
 - `docs/AUTHORING.md` — manual skill authoring reference
-- `skills/canopy-agent/SKILL.md` — agent body: detects platform, dispatches deterministically to one of 10 ops
-- `skills/canopy-agent/ops/` — per-operation procedure files
-- `skills/canopy-agent/policies/authoring-rules.md` — skill structure, writing style, op naming, subagent contract, debug meta-skill
-- `skills/canopy-agent/policies/category-decision-flowchart.md` · `platform-targeting.md` · `preservation-rules.md` · `conversion-expansion-rules.md`
-- `skills/canopy-agent/constants/` — lookup tables: category dirs, control flow notation, operation detection, dispatch map, validation checks
-- `skills/canopy-agent/schemas/dispatch-schema.json` — output contract for the canopy-agent's intent-classification subagent
-- `skills/canopy-agent/schemas/explore-schema.json` — output contract for skill-analysis explore subagents
-- `skills/canopy-agent/templates/SKILL.md` and `ops.md` — skeletons used by SCAFFOLD
-- `skills/canopy-agent/verify/` — expected-state checklists per operation
-- `skills/canopy-agent/references/framework-ops.md` — immutable framework primitives
-- `skills/canopy-agent/references/runtime-claude.md` — Claude Code runtime spec (base paths, native subagents, invocation forms)
-- `skills/canopy-agent/references/runtime-copilot.md` — GitHub Copilot runtime spec (inline subagent fallback, `.github/` paths, invocation forms)
-- `skills/canopy-agent/references/skill-resources.md` — category behavior, op lookup chain, tree format, explore subagent (reference doc)
+- `skills/canopy/SKILL.md` — agent body: detects platform, dispatches deterministically to one of 10 ops
+- `skills/canopy/ops/` — per-operation procedure files
+- `skills/canopy/policies/authoring-rules.md` — skill structure, writing style, op naming, subagent contract, debug meta-skill
+- `skills/canopy/policies/category-decision-flowchart.md` · `platform-targeting.md` · `preservation-rules.md` · `conversion-expansion-rules.md`
+- `skills/canopy/constants/` — lookup tables: category dirs, control flow notation, operation detection, dispatch map, validation checks
+- `skills/canopy/schemas/dispatch-schema.json` — output contract for the canopy's intent-classification subagent
+- `skills/canopy/schemas/explore-schema.json` — output contract for skill-analysis explore subagents
+- `skills/canopy/templates/SKILL.md` and `ops.md` — skeletons used by SCAFFOLD
+- `skills/canopy/verify/` — expected-state checklists per operation
+- `skills/canopy/references/framework-ops.md` — immutable framework primitives
+- `skills/canopy/references/runtime-claude.md` — Claude Code runtime spec (base paths, native subagents, invocation forms)
+- `skills/canopy/references/runtime-copilot.md` — GitHub Copilot runtime spec (inline subagent fallback, `.github/` paths, invocation forms)
+- `skills/canopy/references/skill-resources.md` — category behavior, op lookup chain, tree format, explore subagent (reference doc)
 
 ## Install / Distribute
 
@@ -102,9 +101,9 @@ gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|
 
 When modifying any of these, keep all in sync:
 - `docs/FRAMEWORK.md`
-- `skills/canopy-agent/references/skill-resources.md`
-- `skills/canopy-agent/references/framework-ops.md`
-- `skills/canopy-agent/policies/` — update the relevant policy file(s)
+- `skills/canopy/references/skill-resources.md`
+- `skills/canopy/references/framework-ops.md`
+- `skills/canopy/policies/` — update the relevant policy file(s)
 
 After any change to skill or op behavior, check that `references/runtime-claude.md`, `references/runtime-copilot.md`, and `docs/AUTHORING.md` still accurately describe current behavior. Update stale content before the work is considered done.
 
@@ -120,7 +119,7 @@ Both files must be kept in sync. Releases are made by tagging the new version (`
 
 ## SKILL.md Constraints
 
-`SKILL.md` must contain **only** orchestration — no tables, JSON/YAML blocks, scripts, inline examples, or templates. Structured content belongs in category subdirectories. See `skills/canopy-agent/policies/authoring-rules.md` for the full rule set.
+`SKILL.md` must contain **only** orchestration — no tables, JSON/YAML blocks, scripts, inline examples, or templates. Structured content belongs in category subdirectories. See `skills/canopy/policies/authoring-rules.md` for the full rule set.
 
 ## Platform Compatibility
 
