@@ -215,9 +215,13 @@ write_marker_block() {
         return 0
     fi
 
+    # grep -c prints the count even when no matches, and exits 1 when no matches.
+    # We want the count regardless — use `|| true` so the 0 from grep is what's captured.
     local begin_count end_count
-    begin_count="$(grep -cFx "$MARKER_START" "$target_file" 2>/dev/null || echo 0)"
-    end_count="$(grep -cFx "$MARKER_END" "$target_file" 2>/dev/null || echo 0)"
+    begin_count="$(grep -cFx "$MARKER_START" "$target_file" 2>/dev/null || true)"
+    end_count="$(grep -cFx "$MARKER_END" "$target_file" 2>/dev/null || true)"
+    begin_count="${begin_count:-0}"
+    end_count="${end_count:-0}"
 
     # Case 5: malformed (unmatched markers) → refuse
     if [[ "$begin_count" -ne "$end_count" ]]; then
