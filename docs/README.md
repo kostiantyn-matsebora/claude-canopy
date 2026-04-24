@@ -109,12 +109,24 @@ pyproject.toml, and other version-bearing files; lists all files needing updates
 
 ## Quick Start
 
-Canopy ships as two [Agent Skills](https://agentskills.io). The same skills work on **Claude Code** and **GitHub Copilot** — only the install path differs.
+Canopy ships as three [Agent Skills](https://agentskills.io), split along **authoring vs. execution** lines. Same skills work on Claude Code and GitHub Copilot — only the install path differs.
 
-**The two skills:**
+**The three skills:**
 
-- **`canopy`** — the agent skill (ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs). Provides `/canopy` for authoring/validating/improving/scaffolding/refactoring Canopy skills. Run `/canopy help` for the operations reference.
-- **`canopy-debug`** — trace any Canopy skill with phase banners and per-node tracing (`/canopy-debug <skill>`)
+- **`canopy-runtime`** — execution engine. Interprets canopy-flavored skills (platform detection, primitives, op lookup chain, category semantics, subagent contract). Hidden from the `/` menu. Loaded ambiently via `CLAUDE.md` / `.github/copilot-instructions.md`. **Install this alone if you only want to execute existing canopy skills.**
+- **`canopy`** — authoring agent. Create / modify / validate / improve / scaffold / refactor / advise on / convert Canopy skills. Provides `/canopy`. Depends on `canopy-runtime` for the framework spec.
+- **`canopy-debug`** — trace wrapper. `/canopy-debug <skill>` emits phase banners and per-node tracing.
+
+### Authoring vs. execution
+
+| If you want to… | Install |
+|---|---|
+| Run existing canopy skills that someone else wrote | `canopy-runtime` only |
+| Author or edit canopy skills | `canopy` + `canopy-runtime` |
+| Trace / debug a canopy skill's execution | `canopy-debug` + `canopy-runtime` |
+| Everything (default) | All three |
+
+The install script below installs all three by default. `gh skill install` and `/plugin install` let you pick individual skills.
 
 ### Install for Claude Code
 
@@ -136,13 +148,14 @@ Skills land under your plugin cache and become available as `/canopy:canopy` and
 Skills land under `.claude/skills/<name>/` and become available as `/canopy` and `/canopy-debug` (no namespace).
 
 ```bash
-gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-runtime --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent claude-code --scope project --pin v0.17.0
 ```
 
-**Option 3 — Install script (no external CLI required):**
+**Option 3 — Install script (recommended — also wires ambient runtime activation):**
 
-Same placement and slash commands as Option 2. The script is idempotent — re-run to update. Canopy is platform-agnostic, so the same script handles Claude Code, Copilot, or both in one pass via `--target`.
+Installs all three skills AND writes a marker-delimited canopy-runtime block to `CLAUDE.md` (or `.github/copilot-instructions.md` on Copilot) so any canopy-flavored skill gets the runtime rules ambiently — nothing to opt into per skill. The script is idempotent — re-run to update. Canopy is platform-agnostic; the same script handles Claude Code, Copilot, or both in one pass via `--target`.
 
 ```bash
 # macOS / Linux — defaults to --target claude
@@ -159,16 +172,18 @@ Flags:
 | Purpose | bash | PowerShell |
 |---|---|---|
 | Pin version | `--version 0.18.0` | `-Version 0.18.0` |
+| Install a branch / tag / commit SHA (pre-release testing) | `--ref canopy-as-agent-skill` | `-Ref canopy-as-agent-skill` |
 | Claude Code only | `--target claude` (default) | `-Target claude` (default) |
 | GitHub Copilot only | `--target copilot` | `-Target copilot` |
 | **Both platforms in one run** | `--target both` | `-Target both` |
 
 Version resolution order:
-1. Explicit flag (`--version` / `-Version`)
-2. `.canopy-version` file in the current directory — commit this to your repo to pin a version across collaborators
-3. Latest release tag from GitHub
+1. `--ref` / `-Ref` flag (git branch/tag/SHA — bypasses version resolution; does NOT write `.canopy-version`)
+2. `--version` / `-Version` flag (`v<version>` tag)
+3. `.canopy-version` file — commit this to your repo to pin a version across collaborators
+4. Latest release tag from GitHub
 
-The script writes `.canopy-version` after a successful install, so the next run reinstalls the same version unless you bump it.
+For version-pinned installs, the script writes `.canopy-version` after a successful install, so the next run reinstalls the same version unless you bump it. `--ref` installs skip this write (they're transient by design).
 
 For user-scope install (available across all your projects), run the script from `~` instead of your project root.
 
@@ -179,9 +194,12 @@ Skills land under `.github/skills/<name>/` and become available via `/canopy` an
 **With `gh skill` (GitHub CLI v2.90.0+, recommended):**
 
 ```bash
-gh skill install kostiantyn-matsebora/claude-canopy canopy       --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-debug --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-runtime --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent github-copilot --scope project --pin v0.17.0
 ```
+
+Note: `gh skill install` does NOT write `.github/copilot-instructions.md`. For ambient runtime activation on Copilot, prefer the install script (Option 3).
 
 **Install script (no external CLI required):**
 
@@ -334,14 +352,14 @@ For detailed directory layout and structure (standalone vs. submodule), see [FRA
 Op lookup (ALL_CAPS node -> definition):                         Category resources (loaded per step):
 1. my-skill/ops.md                          (skill-local)        schemas/   -> subagent contracts
 2. consumer-defined cross-skill ops         (optional)           policies/  -> active rules / guardrails
-3. canopy/references/framework-ops.md (primitives)         templates/ -> fill <token> -> write file
+3. canopy-runtime/references/framework-ops.md (primitives)         templates/ -> fill <token> -> write file
    IF, ELSE, SWITCH, FOR_EACH, ASK, SHOW_PLAN, VERIFY...         commands/  -> run named shell section
                                                                   constants/ -> load named values
                                                                   verify/    -> post-run checklist
 
 Runtime specs (loaded at Stage 2):
-  canopy/references/runtime-claude.md   -> .claude/ paths, native subagents
-  canopy/references/runtime-copilot.md  -> .github/ paths, inline subagent fallback
+  canopy-runtime/references/runtime-claude.md   -> .claude/ paths, native subagents
+  canopy-runtime/references/runtime-copilot.md  -> .github/ paths, inline subagent fallback
 ```
 
 ---
@@ -352,7 +370,7 @@ Canopy is currently a personal project. Issues and PRs welcome once the API stab
 
 - Keep `docs/FRAMEWORK.md` as the single source of truth
 - `canopy` skill must be updated whenever framework rules change
-- Framework primitives in `skills/canopy/references/framework-ops.md` are immutable contracts
+- Framework primitives in `skills/canopy-runtime/references/framework-ops.md` are immutable contracts
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and PR expectations.
 

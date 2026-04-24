@@ -6,14 +6,15 @@ See [README.md](README.md) for overview, quick start, and setup.
 
 ## Framework Skills
 
-Canopy ships as four [agentskills.io](https://agentskills.io)-format Agent Skills:
+Canopy ships as three [agentskills.io](https://agentskills.io)-format Agent Skills, split along authoring-vs-execution lines:
 
-| Skill | Purpose |
-|-------|---------|
-| `canopy` | The agent skill — creates, modifies, scaffolds, validates, improves, refactors, advises on, and converts Canopy skills. Carries all ops, policies, constants, schemas, templates, verify checklists, framework primitives, and runtime specs. Provides `/canopy` (and `/canopy help` for the operations reference). |
-| `canopy-debug` | Trace any Canopy skill with phase banners and per-node tracing |
+| Skill | Role | Purpose |
+|-------|------|---------|
+| `canopy-runtime` | **Execution engine** | Interprets canopy-flavored skills at runtime. Contains platform detection, primitives spec (`framework-ops.md`), category semantics + op lookup + tree format (`skill-resources.md`), and per-platform runtime rules (`runtime-claude.md`, `runtime-copilot.md`). Hidden from `/` menu. Loaded ambiently via `CLAUDE.md` / `.github/copilot-instructions.md`. Install this alone to execute canopy skills without authoring. |
+| `canopy` | **Authoring agent** | Creates, modifies, scaffolds, validates, improves, refactors, advises on, and converts Canopy skills. Depends on `canopy-runtime` for the framework spec (reads `../canopy-runtime/references/...` at dispatch). Provides `/canopy` (and `/canopy help` for the operations reference). |
+| `canopy-debug` | **Trace wrapper** | Trace any canopy-flavored skill with phase banners and per-node tracing. Loads canopy-runtime at the top of its tree for formal runtime adherence. |
 
-When modifying `FRAMEWORK.md`, `skills/canopy/references/skill-resources.md`, or `skills/canopy/references/framework-ops.md`, also update the relevant policy files in `skills/canopy/policies/` to stay in sync.
+When modifying `FRAMEWORK.md`, `skills/canopy-runtime/references/skill-resources.md`, or `skills/canopy-runtime/references/framework-ops.md`, also update the relevant policy files in `skills/canopy/policies/` to stay in sync.
 
 ### Skill Format
 
@@ -46,8 +47,8 @@ At execution time the canopy skill:
 
 | File | Platform |
 |------|----------|
-| `skills/canopy/references/runtime-claude.md` | Claude Code — native subagents, `.claude/` paths |
-| `skills/canopy/references/runtime-copilot.md` | GitHub Copilot — inline subagent fallback, `.github/` paths |
+| `skills/canopy-runtime/references/runtime-claude.md` | Claude Code — native subagents, `.claude/` paths |
+| `skills/canopy-runtime/references/runtime-copilot.md` | GitHub Copilot — inline subagent fallback, `.github/` paths |
 
 Platform-agnostic constructs (`ASK`, `IF/ELSE_IF`, `SWITCH/CASE`, `SHOW_PLAN`, `VERIFY_EXPECTED`) behave identically on both platforms. The runtime spec only defines what differs.
 
@@ -60,23 +61,25 @@ Platform-agnostic constructs (`ASK`, `IF/ELSE_IF`, `SWITCH/CASE`, `SHOW_PLAN`, `
 ```
 claude-canopy/
 ├── skills/
-│   ├── canopy/                          # The agent skill
-│   │   ├── SKILL.md                     # Frontmatter + agent body
+│   ├── canopy/                          # Authoring agent
+│   │   ├── SKILL.md                     # Loads canopy-runtime spec up-front, dispatches to ops
 │   │   ├── ops/                         # Per-operation procedure files (10)
 │   │   ├── policies/                    # Authoring rules, decision flowchart, etc. (5)
-│   │   ├── constants/                   # Lookup tables (8)
-│   │   ├── schemas/                     # Subagent output contracts (2 JSON)
-│   │   ├── templates/                   # SKILL.md and ops.md skeletons used by SCAFFOLD (2)
-│   │   ├── verify/                      # Expected-state checklists per op (7)
-│   │   └── references/                  # Loaded on demand
-│   │       ├── framework-ops.md         # Framework primitives (IF, SWITCH, FOR_EACH, …)
-│   │       ├── runtime-claude.md        # Claude Code runtime spec
-│   │       ├── runtime-copilot.md       # GitHub Copilot runtime spec
-│   │       └── skill-resources.md       # Category behavior, op lookup chain (reference doc)
-│   └── canopy-debug/                    # Trace meta-skill
-│       ├── SKILL.md
-│       ├── ops.md
-│       └── policies/debug-output.md
+│   │   ├── constants/                   # Lookup tables used by authoring ops
+│   │   ├── schemas/                     # Subagent output contracts (dispatch-schema, explore-schema)
+│   │   ├── templates/                   # SKILL.md + ops.md skeletons used by SCAFFOLD
+│   │   └── verify/                      # Expected-state checklists per authoring op
+│   ├── canopy-debug/                    # Trace wrapper
+│   │   ├── SKILL.md
+│   │   ├── ops.md
+│   │   └── policies/debug-output.md
+│   └── canopy-runtime/                  # Execution engine
+│       ├── SKILL.md                     # Overview + platform detection + pointers to references/
+│       └── references/
+│           ├── framework-ops.md         # Framework primitives (IF, SWITCH, FOR_EACH, …)
+│           ├── runtime-claude.md        # Claude Code runtime rules
+│           ├── runtime-copilot.md       # GitHub Copilot runtime rules
+│           └── skill-resources.md       # Category behavior, op lookup chain, tree format, subagent contract
 ├── docs/                                 # FRAMEWORK.md, AUTHORING.md, CHEATSHEET.md, etc.
 ├── assets/                               # Logo / icon files
 ├── .canopy-version                       # Single-line version (machine-readable)
@@ -90,12 +93,14 @@ claude-canopy/
 ```
 <consumer>/
 ├── .claude/skills/                       # if installed with --agent claude-code
-│   ├── canopy/                           # full skill directory copied here
-│   ├── canopy-debug/
+│   ├── canopy/                           # authoring agent (optional — required only if author skills)
+│   ├── canopy-debug/                     # trace wrapper
+│   ├── canopy-runtime/                   # execution engine (minimum install — required to execute any canopy skill)
 │   └── <your-skill>/                     # consumer-authored skills
 └── .github/skills/                       # if installed with --agent github-copilot
     ├── canopy/
-    └── canopy-debug/
+    ├── canopy-debug/
+    └── canopy-runtime/
 ```
 
 A consumer-authored skill follows the same agentskills.io layout:
@@ -222,7 +227,7 @@ Both are parsed identically. Use whichever reads more naturally for the skill.
 
 ## Control Flow Primitives
 
-Defined in `skills/canopy/references/framework-ops.md` (bundled with the `canopy` skill). Always looked up there — never overridden in skill-local or project ops.
+Defined in `skills/canopy-runtime/references/framework-ops.md` (bundled with the `canopy-runtime` skill). Always looked up there — never overridden in skill-local or project ops.
 
 ### `IF << condition`
 ```
@@ -288,10 +293,10 @@ When a tree node contains an `ALL_CAPS` identifier:
 
 1. **`<skill>/ops.md`** — skill-local ops (checked first)
 2. **Consumer-defined cross-skill ops** — optional; consumers package these as their own skill (no built-in location)
-3. **`canopy/references/framework-ops.md`** — framework primitives (fallback, bundled with the `canopy` skill)
+3. **`canopy-runtime/references/framework-ops.md`** — framework primitives (fallback, bundled with the `canopy-runtime` skill)
 
 Primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `FOR_EACH`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`, `BREAK`, `END`) always
-resolve to `canopy/references/framework-ops.md` and are never overridden.
+resolve to `canopy-runtime/references/framework-ops.md` and are never overridden.
 
 ---
 
@@ -337,7 +342,7 @@ Op definitions calling other ops (including shared ops) is valid — the system 
 
 ## Op Registries
 
-### Framework primitives (`skills/canopy/references/framework-ops.md`)
+### Framework primitives (`skills/canopy-runtime/references/framework-ops.md`)
 
 Control-flow and interaction ops available in every skill, in every project. Bundled with the `canopy` skill.
 
@@ -383,7 +388,7 @@ Load at point of use in the tree — never front-load all reads at the top.
 
 ## Skill Resource Conventions
 
-`skills/canopy/references/skill-resources.md` documents the category behavior table, op lookup order, tree execution model, and explore subagent contract. It is no longer an ambient rule (the agentskills.io distribution has no glob mechanism); it is loaded on demand by `canopy` ops when needed.
+`skills/canopy-runtime/references/skill-resources.md` documents the category behavior table, op lookup order, tree execution model, and explore subagent contract. It is no longer an ambient rule (the agentskills.io distribution has no glob mechanism); it is loaded on demand by `canopy` ops when needed.
 
 Consumers do not need to wire anything — once `canopy` is installed, its ops resolve resource references through the bundled reference docs.
 

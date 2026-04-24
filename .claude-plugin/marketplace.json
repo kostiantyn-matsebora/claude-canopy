@@ -4,14 +4,14 @@
     "name": "Kostiantyn Matsebora"
   },
   "metadata": {
-    "description": "Canopy — skills as executable code. Installable as a Claude Code plugin.",
+    "description": "Canopy — skills as executable code. Installable as a Claude Code plugin. Bundles runtime engine + authoring agent + trace wrapper.",
     "version": "0.17.0"
   },
   "plugins": [
     {
       "name": "canopy",
       "source": "./",
-      "description": "Canopy framework — authors, validates, improves, scaffolds, and refactors skills using a structured control-flow notation. Bundles the canopy agent skill and canopy-debug trace meta-skill.",
+      "description": "Canopy framework — three bundled skills: canopy-runtime (execution engine; interprets canopy-flavored skills), canopy (authoring agent), canopy-debug (trace wrapper). Install canopy-runtime alone to execute existing canopy skills; add canopy to create/edit/manage them.",
       "version": "0.17.0",
       "author": {
         "name": "Kostiantyn Matsebora"

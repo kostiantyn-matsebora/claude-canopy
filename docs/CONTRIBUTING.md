@@ -14,8 +14,8 @@ This repo is the framework itself. Good contributions include:
 If a change affects framework behavior, keep these files in sync:
 
 - `docs/FRAMEWORK.md`
-- `skills/canopy/references/skill-resources.md`
-- `skills/canopy/references/framework-ops.md`
+- `skills/canopy-runtime/references/skill-resources.md`
+- `skills/canopy-runtime/references/framework-ops.md`
 - `skills/canopy/policies/authoring-rules.md`
 
 ## Getting Started

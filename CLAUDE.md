@@ -14,12 +14,13 @@ Canopy is a declarative framework for writing skills as **syntax trees of named 
 
 ## Repo Layout (v0.17.0+)
 
-This repo ships two installable Agent Skills under `skills/`:
+This repo ships three installable Agent Skills under `skills/`, split along authoring-vs-execution lines:
 
-| Skill | Purpose |
-|-------|---------|
-| `canopy/` | The agent skill — ops, policies, constants, schemas, templates, verify checklists, framework primitives, runtime specs. Invokes as `/canopy`. The HELP op (`/canopy help`) covers what `canopy-help` used to. |
-| `canopy-debug/` | Trace any Canopy skill with phase banners and per-node tracing |
+| Skill | Role | Notes |
+|-------|------|-------|
+| `canopy/` | **Authoring agent** — create / modify / validate / improve / scaffold / refactor / advise / convert Canopy skills. | Invokes as `/canopy`. Depends on `canopy-runtime` for the framework spec. Ops loaded via `SWITCH`/`CASE` dispatch. |
+| `canopy-debug/` | **Trace wrapper** — run any canopy-flavored skill with phase banners + per-node tracing. | Invokes as `/canopy-debug <skill>`. |
+| `canopy-runtime/` | **Execution engine** — interprets canopy-flavored skills: platform detection, sections/notation/primitives spec, op lookup chain, category semantics, subagent contract. | Hidden from `/` menu (`user-invocable: false`). Loaded ambiently via `CLAUDE.md` / `.github/copilot-instructions.md` (install script writes a marker block). Install this alone to just *execute* canopy skills without authoring. |
 
 Plus:
 
@@ -30,19 +31,21 @@ Plus:
 - `.canopy-version` — single-line version string (machine-readable)
 - `LICENSE`
 
-The repo is intentionally shaped so the SAME `skills/canopy/` and `skills/canopy-debug/` directories serve all three install paths:
-1. **Claude Code plugin** — `.claude-plugin/plugin.json` at repo root + `skills/<name>/SKILL.md` matches the Claude Code plugin layout. Skills become `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced).
+The repo is intentionally shaped so the SAME `skills/canopy/`, `skills/canopy-debug/`, and `skills/canopy-runtime/` directories serve all three install paths:
+1. **Claude Code plugin** — `.claude-plugin/plugin.json` at repo root + `skills/<name>/SKILL.md` matches the Claude Code plugin layout. Skills become `/canopy:canopy`, `/canopy:canopy-debug` (plugin-namespaced; canopy-runtime is hidden).
 2. **`gh skill install`** — reads `skills/*/SKILL.md` from the repo directly. Lands skills at `.claude/skills/<name>/`; slash commands are `/canopy` and `/canopy-debug` (no namespace).
-3. **Manual `git clone` + `cp -r`** — same as `gh skill install`.
+3. **`install.sh` / `install.ps1`** — same placement as gh-skill-install PLUS writes a canopy-runtime marker block to `CLAUDE.md` or `.github/copilot-instructions.md` for ambient runtime activation.
 
 Keep this single-source-of-truth property when adding skills: put them under `skills/<name>/` only. Don't create parallel copies.
+
+**Authoring vs. execution split:** the `canopy` skill (authoring agent) depends on `canopy-runtime` (execution engine) via sibling-relative reads (`../canopy-runtime/references/...`). `canopy-runtime` is the minimum install: a consumer who only wants to *execute* existing canopy skills can install just `canopy-runtime` and skip `canopy`. The install script installs all three by default.
 
 ## Op Lookup Order
 
 When a tree node has an `ALL_CAPS` identifier, look up in this order:
 1. `<skill>/ops.md` — skill-local
 2. Consumer-defined cross-skill ops (optional; consumers package these as their own skill — no built-in location)
-3. `skills/canopy/references/framework-ops.md` — framework primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `FOR_EACH`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`)
+3. `skills/canopy-runtime/references/framework-ops.md` — framework primitives (`IF`, `ELSE_IF`, `ELSE`, `SWITCH`, `CASE`, `DEFAULT`, `FOR_EACH`, `BREAK`, `END`, `ASK`, `SHOW_PLAN`, `VERIFY_EXPECTED`)
 
 Primitives are never overridden.
 
@@ -81,27 +84,39 @@ Reference pattern in SKILL.md: `Read \`<category>/<file>\` for <brief descriptio
 
 - `docs/FRAMEWORK.md` — canonical framework specification (single source of truth)
 - `docs/AUTHORING.md` — manual skill authoring reference
-- `skills/canopy/SKILL.md` — agent body: detects platform, dispatches deterministically to one of 10 ops
-- `skills/canopy/ops/` — per-operation procedure files
+
+**canopy (authoring agent):**
+- `skills/canopy/SKILL.md` — agent body: loads canopy-runtime spec up-front (sibling-relative `../canopy-runtime/...`), then dispatches deterministically to one of 10 ops via `SWITCH/CASE`
+- `skills/canopy/ops/` — per-operation procedure files (create, modify, scaffold, validate, improve, advise, refactor-skills, convert-to-canopy, convert-to-regular, help)
 - `skills/canopy/policies/authoring-rules.md` — skill structure, writing style, op naming, subagent contract, debug meta-skill
 - `skills/canopy/policies/category-decision-flowchart.md` · `platform-targeting.md` · `preservation-rules.md` · `conversion-expansion-rules.md`
-- `skills/canopy/constants/` — lookup tables: category dirs, control flow notation, operation detection, dispatch map, validation checks
-- `skills/canopy/schemas/dispatch-schema.json` — output contract for the canopy's intent-classification subagent
+- `skills/canopy/constants/` — lookup tables for authoring ops (category dirs, control flow notation, operation detection, dispatch map, validation checks)
+- `skills/canopy/schemas/dispatch-schema.json` — output contract for canopy's intent-classification subagent
 - `skills/canopy/schemas/explore-schema.json` — output contract for skill-analysis explore subagents
 - `skills/canopy/templates/SKILL.md` and `ops.md` — skeletons used by SCAFFOLD
-- `skills/canopy/verify/` — expected-state checklists per operation
-- `skills/canopy/references/framework-ops.md` — immutable framework primitives
-- `skills/canopy/references/runtime-claude.md` — Claude Code runtime spec (base paths, native subagents, invocation forms)
-- `skills/canopy/references/runtime-copilot.md` — GitHub Copilot runtime spec (inline subagent fallback, `.github/` paths, invocation forms)
-- `skills/canopy/references/skill-resources.md` — category behavior, op lookup chain, tree format, explore subagent (reference doc)
+- `skills/canopy/verify/` — expected-state checklists per authoring op
+
+**canopy-runtime (execution engine):**
+- `skills/canopy-runtime/SKILL.md` — overview + platform detection + pointers to references/
+- `skills/canopy-runtime/references/framework-ops.md` — immutable framework primitives (spec)
+- `skills/canopy-runtime/references/runtime-claude.md` — Claude Code runtime rules (base paths, native subagents, invocation forms)
+- `skills/canopy-runtime/references/runtime-copilot.md` — GitHub Copilot runtime rules (inline subagent fallback, `.github/` paths, invocation forms)
+- `skills/canopy-runtime/references/skill-resources.md` — category behavior, op lookup chain, tree format, explore subagent contract (shared framework spec)
+
+**canopy-debug (trace wrapper):**
+- `skills/canopy-debug/SKILL.md` — loads canopy-runtime spec up-front, then wraps a target skill with `EXECUTE_WITH_TRACE`
+- `skills/canopy-debug/ops.md` — trace ops (EMIT_PHASE_BANNER, EXECUTE_WITH_TRACE, TRACE_NODE, etc.)
+- `skills/canopy-debug/policies/debug-output.md` — rendering protocol
 
 ## Install / Distribute
 
 Three install paths supported:
 
-1. **Claude Code plugin marketplace** — inside Claude Code: `/plugin marketplace add kostiantyn-matsebora/claude-canopy` then `/plugin install canopy@claude-canopy`. No external CLI required.
-2. **`gh skill`** ([GitHub CLI v2.90.0+](https://cli.github.com/manual/gh_skill_install)) — `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0`. `--agent` chooses `.claude/skills/<skill>/` or `.github/skills/<skill>/`.
-3. **Install script** — `install.sh` / `install.ps1` at the repo root. Consumers fetch via `curl | bash` or `irm | iex`. Script is idempotent (safe to re-run to update), resolves version from `--version` flag → `.canopy-version` file → latest release, writes `.canopy-version` after install.
+1. **Claude Code plugin marketplace** — inside Claude Code: `/plugin marketplace add kostiantyn-matsebora/claude-canopy` then `/plugin install canopy@claude-canopy`. Bundles all three skills. No external CLI required.
+2. **`gh skill`** ([GitHub CLI v2.90.0+](https://cli.github.com/manual/gh_skill_install)) — `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0`. `--agent` chooses `.claude/skills/<skill>/` or `.github/skills/<skill>/`. **Does NOT write ambient instruction files.**
+3. **Install script** — `install.sh` / `install.ps1` at repo root. Consumers fetch via `curl | bash` or `irm | iex`. Resolves version from `--ref` / `--version` flag → `.canopy-version` → latest release. Installs all three skills AND idempotently writes canopy-runtime marker block to `CLAUDE.md` / `.github/copilot-instructions.md` (per `--target`). Supports `--ref <branch|tag|SHA>` for pre-release testing; `--ref` installs do NOT write `.canopy-version`.
+
+The install script is the most complete path because it handles ambient runtime activation. `gh skill install` and `/plugin install` leave the runtime to be loaded via skill-description discovery, which is less deterministic.
 
 No more git subtree, no more symlink wiring.
 
@@ -109,11 +124,11 @@ No more git subtree, no more symlink wiring.
 
 When modifying any of these, keep all in sync:
 - `docs/FRAMEWORK.md`
-- `skills/canopy/references/skill-resources.md`
-- `skills/canopy/references/framework-ops.md`
+- `skills/canopy-runtime/references/skill-resources.md` — category semantics, op lookup chain, tree format, subagent contract
+- `skills/canopy-runtime/references/framework-ops.md` — primitive definitions
 - `skills/canopy/policies/` — update the relevant policy file(s)
 
-After any change to skill or op behavior, check that `references/runtime-claude.md`, `references/runtime-copilot.md`, and `docs/AUTHORING.md` still accurately describe current behavior. Update stale content before the work is considered done.
+After any change to skill or op behavior, check that `skills/canopy-runtime/references/runtime-claude.md`, `runtime-copilot.md`, and `docs/AUTHORING.md` still accurately describe current behavior. Update stale content before the work is considered done.
 
 Commit messages follow Conventional Commits (`feat:`, `fix:`, `docs:`).
 

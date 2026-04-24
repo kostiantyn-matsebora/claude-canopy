@@ -1,6 +1,6 @@
 {
   "name": "canopy",
-  "description": "Canopy framework — authors, validates, improves, scaffolds, and refactors skills using a structured control-flow notation (IF, SWITCH, FOR_EACH, ASK, SHOW_PLAN, VERIFY_EXPECTED). Bundles the canopy agent skill and canopy-debug trace meta-skill.",
+  "description": "Canopy framework — three bundled skills: canopy-runtime (execution engine; interprets canopy-flavored skills at runtime), canopy (authoring agent; create/modify/validate/improve/scaffold canopy skills), canopy-debug (trace wrapper). Install canopy-runtime alone to execute existing canopy skills; add canopy to also create/edit/manage them.",
   "version": "0.17.0",
   "author": {
     "name": "Kostiantyn Matsebora"
