@@ -173,14 +173,15 @@ on Copilot.
 
         $block = Build-MarkerBlock
 
-        # Case 1: file doesn't exist → create
+        # Case 1: file doesn't exist → create with platform-native line endings
         if (-not (Test-Path $TargetFile)) {
             $dir = Split-Path -Parent $TargetFile
             if ($dir -and -not (Test-Path $dir)) {
                 New-Item -ItemType Directory -Path $dir -Force | Out-Null
             }
-            # Default to platform-native line endings for new file
-            [System.IO.File]::WriteAllText($TargetFile, $block + [System.Environment]::NewLine)
+            $nl = [System.Environment]::NewLine
+            $blockNewFile = $block -replace "`r?`n", $nl
+            [System.IO.File]::WriteAllText($TargetFile, $blockNewFile + $nl)
             Write-Host "install.ps1: created $TargetFile with canopy-runtime block"
             return
         }
@@ -199,7 +200,7 @@ on Copilot.
             return
         }
 
-        # Normalize block to file's line-ending style
+        # Normalize block to file's line-ending style (so splice doesn't introduce mixed endings)
         $blockNormalized = $block -replace "`r?`n", $nl
 
         if ($beginCount -eq 0) {
@@ -213,15 +214,21 @@ on Copilot.
             return
         }
 
-        # Case 3 & 4: one or more existing pairs → replace first, warn if >1
+        # Case 3 & 4: one or more existing pairs → replace first, warn if >1.
+        # Direct string splice (no regex) — avoids .NET regex replacement-string
+        # pitfalls with $ literals inside the block body.
         if ($beginCount -gt 1) {
-            Write-Warning "install.ps1: $TargetFile has $beginCount canopy-runtime marker pairs; rewriting only the first."
+            # Write to stderr (not Warning stream) so shell-style `2> file` captures it.
+            [Console]::Error.WriteLine("install.ps1: warning — $TargetFile has $beginCount canopy-runtime marker pairs; rewriting only the first.")
         }
-        $pattern = '(?s)' + [regex]::Escape($MarkerStart) + '.*?' + [regex]::Escape($MarkerEnd)
-        $re = New-Object System.Text.RegularExpressions.Regex($pattern)
-        $newContent = $re.Replace($content, [System.Text.RegularExpressions.Regex]::Escape($blockNormalized) -replace '\\(.)', '$1', 1)
-        # Simpler replace-once:
-        $newContent = $re.Replace($content, { param($m) $blockNormalized }, 1)
+        $startIdx = $content.IndexOf($MarkerStart)
+        $endAt    = $content.IndexOf($MarkerEnd, $startIdx)
+        if ($startIdx -lt 0 -or $endAt -lt 0) {
+            Write-Error "install.ps1: internal error locating markers in $TargetFile"
+            return
+        }
+        $endIdx = $endAt + $MarkerEnd.Length
+        $newContent = $content.Substring(0, $startIdx) + $blockNormalized + $content.Substring($endIdx)
 
         [System.IO.File]::WriteAllText($TargetFile, $newContent)
         Write-Host "install.ps1: updated canopy-runtime block in $TargetFile"
