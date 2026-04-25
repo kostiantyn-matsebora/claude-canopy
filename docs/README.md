@@ -144,7 +144,7 @@ Inside a Claude Code session:
 /canopy:canopy activate
 ```
 
-Skills become `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced). `activate` writes the canopy-runtime marker block to this project's `CLAUDE.md` — required for user skills under `.claude/skills/` to load runtime ambiently. The first two are user-scope (run once per machine); `activate` is project-scope (run once per project).
+Plugin-namespaced as `/canopy:canopy` / `/canopy:canopy-debug`. `activate` writes the marker block to `CLAUDE.md` (required for user skills under `.claude/skills/`). First two: user-scope (once per machine). `activate`: project-scope (once per project).
 
 Update: `/plugin update canopy@claude-canopy`, then re-run `activate` if the new release changed the marker block.
 
@@ -158,7 +158,7 @@ gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent claud
 gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent claude-code --scope project --pin v0.17.1
 ```
 
-Then in a Claude Code session, run `/canopy activate` to write the marker block — `gh skill install` doesn't do that for you. (The vscode extension's `Canopy: Install as Agent Skill (gh skill)` command writes the block automatically; running `activate` after is a safe no-op in that case.)
+Then `/canopy activate` to write the marker block — `gh skill install` skips it. (The vscode extension's `Canopy: Install as Agent Skill (gh skill)` command writes it automatically; re-running `activate` is a safe no-op.)
 
 **Option 3 — Install script (recommended — also wires ambient runtime activation in one step):**
 
