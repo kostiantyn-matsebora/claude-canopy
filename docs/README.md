@@ -144,7 +144,7 @@ Inside a Claude Code session:
 /canopy:canopy activate
 ```
 
-Plugin-namespaced as `/canopy:canopy` / `/canopy:canopy-debug`. `activate` writes the marker block to `CLAUDE.md` (required for user skills under `.claude/skills/`). First two: user-scope (once per machine). `activate`: project-scope (once per project).
+Result: `/canopy:canopy` (authoring) and `/canopy:canopy-debug` (trace), plus a marker block in `CLAUDE.md` that activates runtime for user skills under `.claude/skills/`. The first two are user-scope (once per machine); `activate` is project-scope (once per project).
 
 Update: `/plugin update canopy@claude-canopy`, then re-run `activate` if the new release changed the marker block.
 
