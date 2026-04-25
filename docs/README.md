@@ -144,7 +144,11 @@ Inside a Claude Code session:
 /canopy:canopy activate
 ```
 
-Result: `/canopy:canopy` (authoring) and `/canopy:canopy-debug` (trace), plus a marker block in `CLAUDE.md` that activates runtime for user skills under `.claude/skills/`. The first two are user-scope (once per machine); `activate` is project-scope (once per project).
+| Command | What it does | Scope |
+|---|---|---|
+| `/plugin marketplace add …` | Register the canopy marketplace | user — once per machine |
+| `/plugin install canopy@claude-canopy` | Adds `/canopy:canopy` + `/canopy:canopy-debug` (plugin-namespaced) | user — once per machine |
+| `/canopy:canopy activate` | Writes the canopy-runtime marker block to `CLAUDE.md` so user skills under `.claude/skills/` load runtime ambiently | project — once per project |
 
 Update: `/plugin update canopy@claude-canopy`, then re-run `activate` if the new release changed the marker block.
 
