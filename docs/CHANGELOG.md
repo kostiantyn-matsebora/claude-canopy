@@ -7,6 +7,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.17.1] — 2026-04-25
+
+### Added
+
+- **`ACTIVATE` op** (`/canopy:canopy activate` or `/canopy activate`): writes the canopy-runtime marker block to the current project's `CLAUDE.md` and/or `.github/copilot-instructions.md`. Closes the runtime-activation gap for the two install paths that don't write the block automatically — `/plugin install canopy@claude-canopy` and manual `gh skill install`. Fully idempotent: same write contract as `install.sh write_marker_block()` (create / append / replace / unchanged / refuse-on-malformed). Run once per project after a plugin or gh-skill install; user-authored canopy skills under `.claude/skills/` / `.github/skills/` then load runtime ambiently. Detection phrases: `activate`, `activate runtime`, `wire up runtime`, `install runtime`, `write marker block`, `ambient activation`, `runtime not loading`.
+- **`skills/canopy/constants/marker-block.md`**: canonical source of the marker block content + the idempotent write contract. Documented as needing to stay byte-identical with `install.sh build_marker_block()` and `install.ps1 Build-MarkerBlock`.
+
+### Notes
+
+- Existing install paths are unchanged. Users who installed via `install.sh` / `install.ps1` (or via the vscode extension's `installAsAgentSkill`) already have the block — running ACTIVATE on those projects is a safe no-op.
+
+---
+
 ## [0.17.0] — 2026-04-24
 
 ### Changed (BREAKING)

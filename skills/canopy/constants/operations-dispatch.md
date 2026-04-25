@@ -13,4 +13,5 @@ Paths are relative to this skill's own directory (`skills/canopy/`).
 | `REFACTOR_SKILLS` | `ops/refactor-skills.md` |
 | `ADVISE` | `ops/advise.md` |
 | `IMPROVE` | `ops/improve.md` |
+| `ACTIVATE` | `ops/activate.md` |
 | `HELP` | `ops/help.md` |

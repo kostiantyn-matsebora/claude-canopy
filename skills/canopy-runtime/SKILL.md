@@ -4,7 +4,7 @@ description: Canopy framework execution engine. Interprets canopy-flavored skill
 license: MIT
 user-invocable: false
 metadata:
-  version: "0.17.0"
+  version: "0.17.1"
   author: kostiantyn-matsebora
 ---
 

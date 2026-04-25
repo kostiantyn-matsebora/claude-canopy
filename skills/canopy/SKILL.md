@@ -4,7 +4,7 @@ description: Authors, validates, improves, scaffolds, and refactors Canopy skill
 license: MIT
 allowed-tools: Read Write Edit Glob Grep Bash
 metadata:
-  version: "0.17.0"
+  version: "0.17.1"
   author: kostiantyn-matsebora
 ---
 
@@ -53,10 +53,12 @@ $ARGUMENTS
       * Read `ops/refactor-skills.md` and execute the REFACTOR_SKILLS procedure
     * CASE << "CONVERT_TO_REGULAR"
       * Read `ops/convert-to-regular.md` and execute the CONVERT_TO_REGULAR procedure
+    * CASE << "ACTIVATE"
+      * Read `ops/activate.md` and execute the ACTIVATE procedure
     * CASE << "HELP"
       * Read `ops/help.md` and execute the HELP procedure
     * DEFAULT
-      * ASK << Could not determine the operation. What would you like to do? | Create a skill | Modify a skill | Scaffold a skill | Validate a skill | Improve a skill | Advise | Refactor skills | Convert to regular | Help
+      * ASK << Could not determine the operation. What would you like to do? | Create a skill | Modify a skill | Scaffold a skill | Validate a skill | Improve a skill | Advise | Refactor skills | Convert to regular | Activate runtime | Help
 
 ## Rules
 

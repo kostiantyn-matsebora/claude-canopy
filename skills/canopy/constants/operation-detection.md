@@ -13,4 +13,5 @@ Identify the operation from the user's request — use the first matching row:
 | `ADVISE` | "how to", "how should I", "best way to", "advise", "suggest", "what's the right way", "how would you implement" |
 | `REFACTOR_SKILLS` | "refactor skills", "deduplicate skills", "extract shared", "extract common ops", "extract common resources", "improve reusability across skills" |
 | `CONVERT_TO_REGULAR` | "convert to regular", "de-canopy", "flatten", "convert back", "plain skill" |
+| `ACTIVATE` | "activate", "activate runtime", "wire up runtime", "install runtime", "write marker block", "ambient activation", "runtime not loading" |
 | `HELP` | "help", "what can you do", "list operations", "what operations", "how do I use", "usage" |

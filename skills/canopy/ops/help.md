@@ -77,6 +77,7 @@ The agent detects the intended operation from your words and loads only the proc
 | `ADVISE` | Answer a "how to" question about a skill — read-only, produces a plan | `how should I add a verify step to review-api?` |
 | `REFACTOR_SKILLS` | Find ops/resources duplicated across > 2 skills and extract to shared | `refactor skills` |
 | `CONVERT_TO_REGULAR` | Flatten a Canopy skill back to prose/numbered steps | `convert review-backend back to regular` |
+| `ACTIVATE` | Write the canopy-runtime marker block to this project's `CLAUDE.md` / `.github/copilot-instructions.md` so user skills are runtime-active. Run once per project after `/plugin install` or manual `gh skill install` (install.sh / install.ps1 do this for you). | `activate` |
 | `HELP` | Show this reference | `help` or `what can you do?` |
 
 ---

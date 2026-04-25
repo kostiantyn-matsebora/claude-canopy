@@ -1,7 +1,7 @@
 {
   "name": "canopy",
   "description": "Canopy framework — three bundled skills: canopy-runtime (execution engine; interprets canopy-flavored skills at runtime), canopy (authoring agent; create/modify/validate/improve/scaffold canopy skills), canopy-debug (trace wrapper). Install canopy-runtime alone to execute existing canopy skills; add canopy to also create/edit/manage them.",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "author": {
     "name": "Kostiantyn Matsebora"
   },
