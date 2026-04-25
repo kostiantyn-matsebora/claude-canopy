@@ -120,6 +120,7 @@ Invoke with `/canopy <request>` or natural language. Every operation shows a pla
 | `CONVERT_TO_REGULAR` | "convert X back to plain markdown" | Unwrap tree to prose |
 | `REFACTOR_SKILLS` | "refactor all skills" | Deduplicate ops across skills |
 | `ADVISE` | "advise on…" | Guidance without changes |
+| `ACTIVATE` | "activate" | Write the canopy-runtime marker block to this project's `CLAUDE.md` / `.github/copilot-instructions.md`. Run once after `/plugin install` or manual `gh skill install`; the install scripts do this automatically. |
 | `HELP` | "help" | List capabilities |
 
 **Debug:** `/canopy-debug <skill> [args]` — live phase banners and per-node tracing. See [FRAMEWORK.md — Debug Mode](FRAMEWORK.md#debug-mode).

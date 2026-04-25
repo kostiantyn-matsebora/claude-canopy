@@ -139,21 +139,26 @@ Inside a Claude Code session:
 ```
 /plugin marketplace add kostiantyn-matsebora/claude-canopy
 /plugin install canopy@claude-canopy
+/canopy:canopy activate
 ```
 
-Skills land under your plugin cache and become available as `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced; the `canopy:` prefix prevents conflicts with other plugins). Update later with `/plugin marketplace update` followed by re-install.
+Skills land under your plugin cache and become available as `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced; the `canopy:` prefix prevents conflicts with other plugins). The third command writes the canopy-runtime marker block to this project's `CLAUDE.md` so user-authored canopy skills under `.claude/skills/` load runtime ambiently — required for the plugin install path. Re-run `activate` per project; install + marketplace add are user-scope and only run once.
+
+Update later with `/plugin update canopy@claude-canopy` (re-run `activate` after if the marker block content changed).
 
 **Option 2 — `gh skill` (GitHub CLI v2.90.0+):**
 
 Skills land under `.claude/skills/<name>/` and become available as `/canopy` and `/canopy-debug` (no namespace).
 
 ```bash
-gh skill install kostiantyn-matsebora/claude-canopy canopy-runtime --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent claude-code --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent claude-code --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-runtime --agent claude-code --scope project --pin v0.17.1
+gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent claude-code --scope project --pin v0.17.1
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent claude-code --scope project --pin v0.17.1
 ```
 
-**Option 3 — Install script (recommended — also wires ambient runtime activation):**
+Then in a Claude Code session, run `/canopy activate` to write the marker block — `gh skill install` doesn't do that for you. (The vscode extension's `Canopy: Install as Agent Skill (gh skill)` command writes the block automatically; running `activate` after is a safe no-op in that case.)
+
+**Option 3 — Install script (recommended — also wires ambient runtime activation in one step):**
 
 Installs all three skills AND writes a marker-delimited canopy-runtime block to `CLAUDE.md` (or `.github/copilot-instructions.md` on Copilot) so any canopy-flavored skill gets the runtime rules ambiently — nothing to opt into per skill. The script is idempotent — re-run to update. Canopy is platform-agnostic; the same script handles Claude Code, Copilot, or both in one pass via `--target`.
 
@@ -194,12 +199,12 @@ Skills land under `.github/skills/<name>/` and become available via `/canopy` an
 **With `gh skill` (GitHub CLI v2.90.0+, recommended):**
 
 ```bash
-gh skill install kostiantyn-matsebora/claude-canopy canopy-runtime --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent github-copilot --scope project --pin v0.17.0
-gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent github-copilot --scope project --pin v0.17.0
+gh skill install kostiantyn-matsebora/claude-canopy canopy-runtime --agent github-copilot --scope project --pin v0.17.1
+gh skill install kostiantyn-matsebora/claude-canopy canopy         --agent github-copilot --scope project --pin v0.17.1
+gh skill install kostiantyn-matsebora/claude-canopy canopy-debug   --agent github-copilot --scope project --pin v0.17.1
 ```
 
-Note: `gh skill install` does NOT write `.github/copilot-instructions.md`. For ambient runtime activation on Copilot, prefer the install script (Option 3).
+Then in Copilot Chat, invoke `/canopy activate` to write `.github/copilot-instructions.md` with the marker block — `gh skill install` doesn't do that for you. Or use the install script (Option 3 below) which writes it in the same pass.
 
 **Install script (no external CLI required):**
 

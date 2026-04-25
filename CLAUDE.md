@@ -112,11 +112,11 @@ Reference pattern in SKILL.md: `Read \`<category>/<file>\` for <brief descriptio
 
 Three install paths supported:
 
-1. **Claude Code plugin marketplace** — inside Claude Code: `/plugin marketplace add kostiantyn-matsebora/claude-canopy` then `/plugin install canopy@claude-canopy`. Bundles all three skills. No external CLI required.
-2. **`gh skill`** ([GitHub CLI v2.90.0+](https://cli.github.com/manual/gh_skill_install)) — `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin v0.17.0`. `--agent` chooses `.claude/skills/<skill>/` or `.github/skills/<skill>/`. **Does NOT write ambient instruction files.**
-3. **Install script** — `install.sh` / `install.ps1` at repo root. Consumers fetch via `curl | bash` or `irm | iex`. Resolves version from `--ref` / `--version` flag → `.canopy-version` → latest release. Installs all three skills AND idempotently writes canopy-runtime marker block to `CLAUDE.md` / `.github/copilot-instructions.md` (per `--target`). Supports `--ref <branch|tag|SHA>` for pre-release testing; `--ref` installs do NOT write `.canopy-version`.
+1. **Claude Code plugin marketplace** — inside Claude Code: `/plugin marketplace add kostiantyn-matsebora/claude-canopy` then `/plugin install canopy@claude-canopy`. Bundles all three skills. No external CLI required. **Does NOT write ambient instruction files** — follow with `/canopy:canopy activate` per project (writes `CLAUDE.md`'s canopy-runtime marker block).
+2. **`gh skill`** ([GitHub CLI v2.90.0+](https://cli.github.com/manual/gh_skill_install)) — `gh skill install kostiantyn-matsebora/claude-canopy <skill> --agent claude-code|github-copilot --scope project --pin vX.Y.Z`. `--agent` chooses `.claude/skills/<skill>/` or `.github/skills/<skill>/`. **Does NOT write ambient instruction files** — follow with `/canopy activate` per project, or use the vscode extension's `Canopy: Install as Agent Skill (gh skill)` command which writes the block automatically.
+3. **Install script** — `install.sh` / `install.ps1` at repo root. Consumers fetch via `curl | bash` or `irm | iex`. Resolves version from `--ref` / `--version` flag → `.canopy-version` → latest release. Installs all three skills AND idempotently writes the canopy-runtime marker block to `CLAUDE.md` / `.github/copilot-instructions.md` (per `--target`). Supports `--ref <branch|tag|SHA>` for pre-release testing; `--ref` installs do NOT write `.canopy-version`.
 
-The install script is the most complete path because it handles ambient runtime activation. `gh skill install` and `/plugin install` leave the runtime to be loaded via skill-description discovery, which is less deterministic.
+The install script is the only one-step path. Plugin and gh-skill paths require the `ACTIVATE` op (canopy v0.17.1+) to wire ambient runtime; `ACTIVATE` is idempotent so re-running it is safe.
 
 No more git subtree, no more symlink wiring.
 
