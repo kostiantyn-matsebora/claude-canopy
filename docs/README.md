@@ -113,9 +113,11 @@ Canopy ships as three [Agent Skills](https://agentskills.io), split along **auth
 
 **The three skills:**
 
-- **`canopy-runtime`** — execution engine. Interprets canopy-flavored skills (platform detection, primitives, op lookup chain, category semantics, subagent contract). Hidden from the `/` menu. Loaded ambiently via `CLAUDE.md` / `.github/copilot-instructions.md`. **Install this alone if you only want to execute existing canopy skills.**
-- **`canopy`** — authoring agent. Create / modify / validate / improve / scaffold / refactor / advise on / convert Canopy skills. Provides `/canopy`. Depends on `canopy-runtime` for the framework spec.
-- **`canopy-debug`** — trace wrapper. `/canopy-debug <skill>` emits phase banners and per-node tracing.
+| Skill | Role | Slash command | Notes |
+|---|---|---|---|
+| `canopy-runtime` | Execution engine — interprets canopy-flavored skills (platform detection, primitives, op lookup chain, category semantics, subagent contract). | hidden from `/` | Loaded ambiently via `CLAUDE.md` / `.github/copilot-instructions.md`. Install alone to just *execute* existing canopy skills. |
+| `canopy` | Authoring agent — create / modify / validate / improve / scaffold / refactor / advise on / convert canopy skills. | `/canopy` | Depends on `canopy-runtime`. |
+| `canopy-debug` | Trace wrapper — phase banners + per-node tracing for any canopy skill's execution. | `/canopy-debug <skill>` | Optional. |
 
 ### Authoring vs. execution
 
@@ -142,9 +144,9 @@ Inside a Claude Code session:
 /canopy:canopy activate
 ```
 
-Skills land under your plugin cache and become available as `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced; the `canopy:` prefix prevents conflicts with other plugins). The third command writes the canopy-runtime marker block to this project's `CLAUDE.md` so user-authored canopy skills under `.claude/skills/` load runtime ambiently — required for the plugin install path. Re-run `activate` per project; install + marketplace add are user-scope and only run once.
+Skills become `/canopy:canopy` and `/canopy:canopy-debug` (plugin-namespaced). `activate` writes the canopy-runtime marker block to this project's `CLAUDE.md` — required for user skills under `.claude/skills/` to load runtime ambiently. The first two are user-scope (run once per machine); `activate` is project-scope (run once per project).
 
-Update later with `/plugin update canopy@claude-canopy` (re-run `activate` after if the marker block content changed).
+Update: `/plugin update canopy@claude-canopy`, then re-run `activate` if the new release changed the marker block.
 
 **Option 2 — `gh skill` (GitHub CLI v2.90.0+):**
 
@@ -160,7 +162,7 @@ Then in a Claude Code session, run `/canopy activate` to write the marker block 
 
 **Option 3 — Install script (recommended — also wires ambient runtime activation in one step):**
 
-Installs all three skills AND writes a marker-delimited canopy-runtime block to `CLAUDE.md` (or `.github/copilot-instructions.md` on Copilot) so any canopy-flavored skill gets the runtime rules ambiently — nothing to opt into per skill. The script is idempotent — re-run to update. Canopy is platform-agnostic; the same script handles Claude Code, Copilot, or both in one pass via `--target`.
+Installs all three skills + writes the canopy-runtime marker block to `CLAUDE.md` / `.github/copilot-instructions.md`. Idempotent — re-run to update. `--target claude|copilot|both` handles either platform in a single pass.
 
 ```bash
 # macOS / Linux — defaults to --target claude
